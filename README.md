@@ -1,5 +1,7 @@
 # Introduction to stats in R 
 
+https://www.physalia-courses.org/courses-workshops/course13/
+
 ## COURSE OVERVIEW
 This course will introduce scientists and practitioners interested in applying statistical approaches in their daily routine using R as a working environment. Participants will be introduced into the mysteries of R and R Studio while learning how to perform common statistical analyses. After a short introduction on R and its principles, the focus will be on questions that could be addressed using common statistical analyses, both for descriptive statistics and for statistical inference.
 
