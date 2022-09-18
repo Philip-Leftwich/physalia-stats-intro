@@ -1,8 +1,8 @@
 --- 
-title: "5023Y"
+title: "Intro to R"
 author: "Philip T. Leftwich"
 date: "2022-09-18"
-subtitle: Data Science for Biologists
+subtitle: Introduction to statistics in R for biologists and ecologists
 site: bookdown::bookdown_site
 documentclass: book
 bibliography:
@@ -31,8 +31,8 @@ favicon: images/logos/favicon.ico
 
 
 
-<div class="small_right"><img src="images/logos/logo.png" 
-     alt="Data skills Logo" /></div>
+<div class="small_right"><img src="images/logos/physalia.png" 
+     alt="Physalia Logo" /></div>
 
 
 By the end of this book, you will be able to:
@@ -53,28 +53,7 @@ Additionally, we also provide the solutions to many of the activities. No-one is
 
 Finally, on occasion we will make updates to the book such as fixing typos and including additional detail or activities and as such this book should be considered a living document. Please **tell me** if you find any mistakes. 
 
-## Course Structure
+## Course Overview
 
-We have:
+This course will introduce scientists and practitioners interested in applying statistical approaches in their daily routine using R as a working environment. Participants will be introduced into the mysteries of R and R Studio while learning how to perform common statistical analyses. After a short introduction on R and its principles, the focus will be on questions that could be addressed using common statistical analyses, both for descriptive statistics and for statistical inference.
 
-* one lecture per week
-* one workshop per week
-
-These are both timetabled in-person sessions, and you should check (Timetabler)[https://timetabler.uea.ac.uk/] for up to-date information on scheduling. However, all lessons can be accessed remotely through Collaborate, and everything you need to complete workshops will be available on this site.
-
-If you feel unwell, or cannot attend a session in-person because you need to self-isolate then don’t worry you can access everything, and follow along in real time, or work at your own pace.
-
-Questions/issues/errors can all be posted on our (Yammer)[https://www.yammer.com/uea.ac.uk/] page.
-
-### Workshops
-
-The workshops are the best way to learn, they teach you the practical skills you need to become an R wizard. 
-
-<div class="figure" style="text-align: center">
-<img src="images/wizard.png" alt="R wizards" width="80%" />
-<p class="caption">(\#fig:unnamed-chunk-2)courtesy of Allison Horst</p>
-</div>
-
-### Lectures
-
-Lectures will be recorded, but Q&A and interactions will be best achieved if you can attend in-person. If you have any worries or concerns about your ability to attend in-person teaching sessions please let me know. 

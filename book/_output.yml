@@ -3,7 +3,7 @@ bookdown::bs4_book:
   md_extensions: -smart
   df_print: kable
   repo:
-    base: https://github.com/UEABIO/data-sci-v1
+    base: https://philip-leftwich.github.io/physalia-stats-intro/
     branch: main
     subdir: book
   includes:
