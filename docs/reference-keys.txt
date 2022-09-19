@@ -228,6 +228,7 @@ forgotten-trails
 path-not-taken
 spolling
 visual-editor
+activity-7-test-yourself-2
 summing-up-rmarkdown
 what-we-learned-1
 further-reading-guides-and-tips
@@ -427,7 +428,7 @@ updating-r-rstudio-and-packages
 updating-rstudio
 updating-packages
 updating-r
-exporting-files-from-the-server
+exporting-files-from-the-cloud
 symbols
 baser
 extract-variables

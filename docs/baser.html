@@ -6,16 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>E Base R vs. Tidyverse | Intro to R</title>
 <meta name="author" content="Philip T. Leftwich">
-<meta name="description" content='library(tidyverse)  E.1 Extract variables  Show Solution   Solution   Base R  tidyverse  iris$Sepal.Length # single variable iris[, c("Species", "Petal.Width")] # by name iris[, c(5, 4)] # by...'>
+<meta name="description" content="library(tidyverse) We have worked primarily with the tidyverse tools in this course. While many of the advantages of the tidyverse tools for data wrangling are their simplicity and human...">
 <meta name="generator" content="bookdown 0.24 with bs4_book()">
 <meta property="og:title" content="E Base R vs. Tidyverse | Intro to R">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://ueabio.github.io/data-sci/baser.html">
 <meta property="og:image" content="https://ueabio.github.io/data-sci/images/logos/twitter_card.png">
-<meta property="og:description" content='library(tidyverse)  E.1 Extract variables  Show Solution   Solution   Base R  tidyverse  iris$Sepal.Length # single variable iris[, c("Species", "Petal.Width")] # by name iris[, c(5, 4)] # by...'>
+<meta property="og:description" content="library(tidyverse) We have worked primarily with the tidyverse tools in this course. While many of the advantages of the tidyverse tools for data wrangling are their simplicity and human...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="E Base R vs. Tidyverse | Intro to R">
-<meta name="twitter:description" content='library(tidyverse)  E.1 Extract variables  Show Solution   Solution   Base R  tidyverse  iris$Sepal.Length # single variable iris[, c("Species", "Petal.Width")] # by name iris[, c(5, 4)] # by...'>
+<meta name="twitter:description" content="library(tidyverse) We have worked primarily with the tidyverse tools in this course. While many of the advantages of the tidyverse tools for data wrangling are their simplicity and human...">
 <meta name="twitter:image" content="https://ueabio.github.io/data-sci/images/logos/twitter_card.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.13/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -109,7 +109,7 @@
 <li class="book-part">Appendices</li>
 <li><a class="" href="installing-r.html"><span class="header-section-number">A</span> Installing R</a></li>
 <li><a class="" href="updating-r-rstudio-and-packages.html"><span class="header-section-number">B</span> Updating R, RStudio, and packages</a></li>
-<li><a class="" href="exporting-files-from-the-server.html"><span class="header-section-number">C</span> Exporting files from the server</a></li>
+<li><a class="" href="exporting-files-from-the-cloud.html"><span class="header-section-number">C</span> Exporting files from the cloud</a></li>
 <li><a class="" href="symbols.html"><span class="header-section-number">D</span> Symbols</a></li>
 <li><a class="active" href="baser.html"><span class="header-section-number">E</span> Base R vs. Tidyverse</a></li>
 <li><a class="" href="license.html">License</a></li>
@@ -127,6 +127,8 @@
 </h1>
 <div class="sourceCode" id="cb523"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></code></pre></div>
+<p>We have worked primarily with the tidyverse tools in this course. While many of the advantages of the tidyverse tools for data wrangling are their simplicity and human readability, there is actually nothing that tidyverse does which cannot be similarly achieved with baseR commands. If you are interested in comparing and contrasting check out the examples below.</p>
+<p>These all use the <code>iris</code> dataset, a dataset that comes with baseR (just type <code>iris</code>).</p>
 <div id="extract-variables" class="section level2" number="23.1">
 <h2>
 <span class="header-section-number">E.1</span> Extract variables<a class="anchor" aria-label="anchor" href="#extract-variables"><i class="fas fa-link"></i></a>
@@ -1612,7 +1614,7 @@ $( document ).ready(function() {
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to R</strong>: Introduction to statistics in R for biologists and ecologists" was written by Philip T. Leftwich. It was last built on 2022-09-18.</p>
+    <p>"<strong>Intro to R</strong>: Introduction to statistics in R for biologists and ecologists" was written by Philip T. Leftwich. It was last built on 2022-09-19.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

@@ -8,6 +8,11 @@
 library(tidyverse)
 ```
 
+We have worked primarily with the tidyverse tools in this course. While many of the advantages of the tidyverse tools for data wrangling are their simplicity and human readability, there is actually nothing that tidyverse does which cannot be similarly achieved with baseR commands. If you are interested in comparing and contrasting check out the examples below. 
+
+These all use the `iris` dataset, a dataset that comes with baseR (just type `iris`).
+
+
 ## Extract variables
 
 <button id="displayTextunnamed-chunk-3" onclick="javascript:toggle('unnamed-chunk-3');">Show Solution</button>
