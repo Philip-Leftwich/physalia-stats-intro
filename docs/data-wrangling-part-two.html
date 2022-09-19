@@ -105,7 +105,8 @@
 <li><a class="" href="complex-models.html"><span class="header-section-number">16</span> Complex models</a></li>
 <li><a class="" href="generalized-linear-models.html"><span class="header-section-number">17</span> Generalized Linear Models</a></li>
 <li class="book-part">DRY code</li>
-<li><a class="" href="functions-and-iteration.html"><span class="header-section-number">18</span> Functions and Iteration</a></li>
+<li><a class="" href="functions-1.html"><span class="header-section-number">18</span> Functions</a></li>
+<li><a class="" href="iteration.html"><span class="header-section-number">19</span> Iteration</a></li>
 <li class="book-part">Appendices</li>
 <li><a class="" href="installing-r.html"><span class="header-section-number">A</span> Installing R</a></li>
 <li><a class="" href="updating-r-rstudio-and-packages.html"><span class="header-section-number">B</span> Updating R, RStudio, and packages</a></li>
@@ -306,7 +307,7 @@ Solution
 <p>In this example, by grouping on the individual penguin ids, then summarising by n - we can see how many times each penguin was monitored in the course of this study.</p>
 <div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">penguin_stats</span> <span class="op">&lt;-</span> <span class="va">penguins</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">penguin_id</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">individual_id</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>num<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="info">
 <p>

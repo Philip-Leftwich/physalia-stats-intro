@@ -188,7 +188,7 @@ In this example, by grouping on the individual penguin ids, then summarising by 
 
 ```{r, eval  = F}
 penguin_stats <- penguins %>% 
-  group_by(penguin_id) %>% 
+  group_by(individual_id) %>% 
   summarise(num=n())
 ```
 

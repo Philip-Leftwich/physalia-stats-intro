@@ -105,7 +105,8 @@
 <li><a class="" href="complex-models.html"><span class="header-section-number">16</span> Complex models</a></li>
 <li><a class="" href="generalized-linear-models.html"><span class="header-section-number">17</span> Generalized Linear Models</a></li>
 <li class="book-part">DRY code</li>
-<li><a class="" href="functions-and-iteration.html"><span class="header-section-number">18</span> Functions and Iteration</a></li>
+<li><a class="" href="functions-1.html"><span class="header-section-number">18</span> Functions</a></li>
+<li><a class="" href="iteration.html"><span class="header-section-number">19</span> Iteration</a></li>
 <li class="book-part">Appendices</li>
 <li><a class="" href="installing-r.html"><span class="header-section-number">A</span> Installing R</a></li>
 <li><a class="" href="updating-r-rstudio-and-packages.html"><span class="header-section-number">B</span> Updating R, RStudio, and packages</a></li>
@@ -549,7 +550,7 @@ RStudio will by default save the objects in its memory when you close a session.
 These will then be there the next time you logon. It might seem nice to be able to close things down and pick up where you left off, but its actually quite dangerous. It's messy, and can cause lots of problems when we work with scripts later, so don't do this!
 </p>
 <p>
-To stop RStudio from saving objects by default go to the Preferences option and change "Save workspace to .RData on exit" to "Never".
+To stop RStudio from saving objects by default go to Tools &gt; Project Options option and change "Save workspace to .RData on exit" to "No" or "Never".
 </p>
 <p>
 Instead we are going to learn how to use scripts to quickly re-run analyses we have been working on.
@@ -760,7 +761,14 @@ It is a good thing to take note of all warnings and errors - they provide useful
 <span class="header-section-number">1.12</span> Writing scripts<a class="anchor" aria-label="anchor" href="#writing-scripts"><i class="fas fa-link"></i></a>
 </h2>
 <p>Until now we have been typing words directly into the Console. This is fine for short/simple calculations - but as soon as we have a more complex, multi-step process this becomes time consuming, error-prone and <em>boring</em>. <strong>Scripts</strong> are a document containing all of your commands (in the order you want them to run), they are <em>repeatable, shareable, annotated records of what you have done</em>. In short they are incredibly useful - and a big step towards <strong>open</strong> and <strong>reproducible</strong> research.</p>
-<p>To create a script go to File &gt; New File &gt; R Script.</p>
+<div class="panel panel-default">
+<div class="panel-heading">
+Task
+</div>
+<div class="panel-body">
+Create a script by going to File &gt; New File &gt; R Script.
+</div>
+</div>
 <div class="figure" style="text-align: center">
 <span style="display:block;" id="fig:script"></span>
 <img src="images/RStudio.png" alt="RStudio interface - top left script, botto  left console" width="100%"><p class="caption">
@@ -978,9 +986,7 @@ Check your script
 <p>When you get the correct answer, the answer box will turn green. Sometimes this doesn't work on Internet Explorer or Edge so be sure to use Chrome or Firefox.</p>
 <p><strong>Question 1.</strong> What is the output from 5^4</p>
 <p><input class="webex-solveme nospaces" size="3" data-answer='["625"]'></p>
-<p><strong>Question 2.</strong> Put the brackets in the correct place to make this equation correct <code>4+2*8 = 48</code></p>
-<p><input class="webex-solveme nospaces" size="2" data-answer='["48"]'></p>
-<p><strong>Question 3.</strong> What answer will you get when you type <code>2+2 = 4</code> into the R console?</p>
+<p><strong>Question 2.</strong> What answer will you get when you type <code>2+2 = 4</code> into the R console?</p>
 <p><select class="webex-select"><option value="blank"></option>
 <option value="">TRUE</option>
 <option value="">FALSE</option>
@@ -991,29 +997,29 @@ Solution
 </button>
 <p>If we wanted R to make a judgement we must use == not = otherwise we will get an Error message</p>
 </div>
-<p><strong>Question 4.</strong> What symbol do I use if I want to <strong>assign</strong> a value or output of a function to an R object</p>
+<p><strong>Question 3.</strong> What symbol do I use if I want to <strong>assign</strong> a value or output of a function to an R object</p>
 <p><input class="webex-solveme nospaces" size="2" data-answer='["&lt;-"]'></p>
-<p><strong>Question 5.</strong> What is the value of <code>a</code> if I ran the following commands?</p>
+<p><strong>Question 4.</strong> What is the value of <code>a</code> if I ran the following commands?</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">a</span> <span class="op">&lt;-</span>  <span class="fl">12</span><span class="op">*</span><span class="fl">2</span>
 
 <span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">5</span></code></pre></div>
 <p><input class="webex-solveme nospaces" size="1" data-answer='["5"]'></p>
-<p><strong>Question 6.</strong> Which of these variable naming conventions is <strong>not</strong> written correctly?</p>
+<p><strong>Question 5.</strong> Which of these variable naming conventions is <strong>not</strong> written correctly?</p>
 <p><select class="webex-select"><option value="blank"></option>
 <option value="">snake_case</option>
 <option value="">camelCase</option>
 <option value="answer">Screaming_Snake_Case</option>
 <option value="">kebab-case</option></select></p>
-<p><strong>Question 7.</strong> What should I type into the R console if I want <code>help</code> with the <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> function?</p>
+<p><strong>Question 6.</strong> What should I type into the R console if I want <code>help</code> with the <code><a href="https://rdrr.io/r/base/Round.html">round()</a></code> function?</p>
 <p><input class="webex-solveme nospaces" size="11" data-answer='["help(round)"]'></p>
-<p><strong>Question 8.</strong> Which of these statements about function arguments <strong>is not true</strong></p>
+<p><strong>Question 7.</strong> Which of these statements about function arguments <strong>is not true</strong></p>
 <p><select class="webex-select"><option value="blank"></option>
 <option value="">Arguments are the inputs we give to a function</option>
 <option value="answer">Values for R arguments must always be defined by the user</option>
 <option value="">Naming arguments supersedes position in a function</option>
 <option value="">There is no limit to the number of arguments a function could have</option></select></p>
-<p><strong>Question 9.</strong> Evaluate this statement "An R Package can contain code functions, data, or both."</p>
+<p><strong>Question 8.</strong> Evaluate this statement "An R Package can contain code functions, data, or both."</p>
 <p><select class="webex-select"><option value="blank"></option>
 <option value="answer">TRUE</option>
 <option value="">FALSE</option></select></p>
