@@ -15,7 +15,11 @@ fig:unnamed-chunk-6
 fig:unnamed-chunk-9
 fig:unnamed-chunk-11
 tab:unnamed-chunk-14
+fig:unnamed-chunk-44
+fig:unnamed-chunk-45
 fig:ambitious-figure
+fig:unnamed-chunk-7
+fig:unnamed-chunk-8
 tab:unnamed-chunk-27
 fig:unnamed-chunk-16
 fig:unnamed-chunk-19
@@ -23,13 +27,11 @@ fig:unnamed-chunk-27
 fig:unnamed-chunk-29
 fig:unnamed-chunk-40
 fig:unnamed-chunk-41
-fig:unnamed-chunk-45
 tab:unnamed-chunk-10
 fig:unnamed-chunk-12
 fig:unnamed-chunk-26
 tab:unnamed-chunk-18
 fig:unnamed-chunk-28
-fig:unnamed-chunk-7
 fig:unnamed-chunk-38
 fig:unnamed-chunk-10
 tab:unnamed-chunk-21
@@ -162,6 +164,7 @@ data-visualisation-with-ggplot2
 intro-to-grammar
 before-we-start
 checklist-2
+what-if-source-isnt-working
 building-a-plot
 aesthetics---aes
 geometric-representations---geom
