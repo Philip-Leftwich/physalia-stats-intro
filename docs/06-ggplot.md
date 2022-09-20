@@ -36,7 +36,7 @@ Think about some basic checks before you start your work today.
 
 * Open a **new** R script - we are moving on from data wrangling to data visualisation
 
-* Save this file in the scripts folder and call it `02_visualisation_penguins.R`
+* Save this file **in the scripts folder** and call it `02_visualisation_penguins.R`
 
 * Add the following to your script and run it:
 
@@ -50,7 +50,6 @@ source("scripts/01_import_penguins_data.R")
 
 * You should find your Environment fills up with objects from script 1
 
-* Save this **new** file inside the scripts folder and call it `02_graphs_penguins.R`
 
 <div class="info">
 <p>The <code>source()</code> function is a very handy way of allowing you to have different scripts for different parts of your R project, but allow access to objects built elsewhere. In this way we are building our analysis in stages.</p>
@@ -68,8 +67,8 @@ source("scripts/01_import_penguins_data.R")
 </div>
 
 <div class="figure" style="text-align: center">
-<img src="images/r_script.png" alt="My scripts and file subdirectory" width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-8)My scripts and file subdirectory</p>
+<img src="images/r_script.png" alt="If you have sucessfully saved 02_visualisation_penguins.R it should be visible here too " width="100%" />
+<p class="caption">(\#fig:unnamed-chunk-8)If you have sucessfully saved 02_visualisation_penguins.R it should be visible here too </p>
 </div>
 
 ### What if source isn't working?
