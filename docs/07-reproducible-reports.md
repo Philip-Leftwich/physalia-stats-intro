@@ -205,7 +205,7 @@ There are also two arrows at the top right of each chunk, which are useful to ru
 
 Knit the template document provided when you opened the new Rmd file. Make a note of the different R chunks, how they are processed and what the outputs look like.
 
-**Question 1.** The global option for this document is set to show the R code used to render chunks <select class='webex-select'><option value='blank'></option><option value=''>FALSE</option><option value='answer'>TRUE</option></select>
+**Question 1.** The global option for this document is set to show the R code used to render chunks <select class='webex-select'><option value='blank'></option><option value='answer'>TRUE</option><option value=''>FALSE</option></select>
 
 
 <div class='webex-solution'><button>Explain This Answer</button>
@@ -345,7 +345,7 @@ head(penguins)
 
 
 <div class="warning">
-<p>You might want start using the <code>here()</code> from now on to read in and export data from scripts. Make sure you are consistent in whether you use <code>here()</code> heuristic file paths or relative file paths across all files in a project - otherwise you might encounter errors.</p>
+<p>You might want start using the <code>here()</code> from now on to read in and export data from scripts. Make sure you are consistent in whether you use <code>here()</code> heuristic file paths or relative file paths across <strong>all .R and .Rmd files in a project</strong> - otherwise you might encounter errors.</p>
 </div>
 
 ## Activity 4: Can you change the global options of your Rmd file so that it doesn't display any code, warnings or messages?

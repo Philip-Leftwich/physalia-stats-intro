@@ -374,7 +374,7 @@ head(penguins)
 
 
 ```{block, type = "warning"}
-You might want start using the `here()` from now on to read in and export data from scripts. Make sure you are consistent in whether you use `here()` heuristic file paths or relative file paths across all files in a project - otherwise you might encounter errors. 
+You might want start using the `here()` from now on to read in and export data from scripts. Make sure you are consistent in whether you use `here()` heuristic file paths or relative file paths across **all .R and .Rmd files in a project** - otherwise you might encounter errors. 
 
 ```
 

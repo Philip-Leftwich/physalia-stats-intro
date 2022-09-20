@@ -19,6 +19,10 @@ Most of the time when we work in R, we will use functions; often pre-written fun
 
 If you need a refresher on what makes up a function [check here][last time](#functions).
 
+
+
+
+
 ## Structuring a function
 
 R makes it easy to create user defined functions by using `function()`. Here is how it works:
@@ -499,6 +503,70 @@ In the previous section we walked through some very basic writing of new functio
 
 We’ve seen how to write a function and how they can be used to create concise re-usable operations that can be applied multiple times in a script without having to copy and paste, but where functions really come into their own is when combined with iteration. Iteration is the process of running the same operation on a group of objects, further minimising code replication. 
 
+
+## Data structures
+
+Functional programming in R requires a good understanding of the types of data structure available in R. Here we have a quick introduction
+
+|Data type|Definition|
+|---|---|
+| Vector| Contains multiple elements of the same type of data `logical`, `integer`, `double`, `character`|
+| Lists| Can contain elements of any type, each element can be a single value, a vector or even an entire dataframe|
+| Matrix| A collection of elements of the same data type `logical`, `integer`, `double`, `character` arranged into rows and columns|
+| Dataframe| A collection of vectors, each vector is a column, each row contains one set of values from each column. Data stored in a dataframe can be of any type of data|
+| tibble| as dataframe, displays data types for each column alongside data|
+
+### Vector
+
+```{r}
+
+vector_one <- (1:3)
+
+vector_two <- c("apples", "bananas", "pears")
+
+```
+
+### List
+
+```{r}
+
+
+new_list <- list(vector_one, vector_two)
+
+names(new_list) <- c("numbers", "fruit")
+
+```
+
+### Matrix
+
+```{r}
+
+new_matrix <- cbind(vector_one, vector_two)
+
+is.matrix(new_matrix)
+
+
+matrix(nrow = 2, ncol = 2)
+
+```
+
+### Dataframe
+
+```{r}
+
+new_dataframe <- data.frame(vector_one, vector_two)
+
+```
+
+### tibble
+
+```{r}
+
+new_tibble <- tibble(vector_one, vector_two)
+
+```
+
+
 ## Simple iteration functions
 
 ### `rep()`
@@ -608,7 +676,7 @@ Here we will introduce two approaches to iterative operations - using for loops 
 
 ## For Loops
 
-For loops are an **essential** part of many
+For loops are an **essential** part of many programming languages, but they are often less utilised in R because of our ability to apply functions to all elements of a vector. However, I will include them here for completeness. 
 
 A for loop has three core parts:
 
@@ -646,6 +714,9 @@ for (num in c(1,2,3,4,5)) {  # the SEQUENCE is defined (numbers 1 to 5) and loop
 So let's make a slightly more complicated function - first we are making a new tibble, first we have four vectors - made of 10 numbers each randomly generated to be roughly close to a 0 mean with a s.d. of 1. Then we combine them to make a tibble
 
 ```{r}
+
+set.seed(1234)
+
 # a simple tibble
 df <- tibble(
   a =  rnorm(10),
@@ -654,35 +725,148 @@ df <- tibble(
   d = rnorm(10)
 )
 
-```
-
-Each vector is randomly generated so the actual averages will be slightly different
-
-```{r, eval = F}
-median(df$a)
-# [1] 0.3085154
-median(df$b)
-# [1] 0.5429483
-median(df$c)
-# [1] -0.5137691
-median(df$d)
-# [1] 0.04415608
+df
 
 ```
 
-So the above code works, but it is repetitive, applying the same function again and again. Below we have a simple for loop 
+Each vector is randomly generated so the actual averages will be slightly different, we can test that here:
+
+```{r, eval = T}
+mean(df$a)
+
+mean(df$b)
+
+mean(df$c)
+
+mean(df$d)
+
+
+```
+
+So the above code works, but it is repetitive, applying the same function again and again. 
+
+Below we have a simple for loop 
 
 ```{r}
-output <- vector("double", ncol(df))  # 1. output having a predefined empty list of the right size works best, we choose to make the vector "double" specifying that it is empty and ready to receive number values. 
+output <- vector("double", ncol(df))  # 1. output having a predefined empty list of the right size works best, here we choose to make the vector "double" specifying that it is empty and ready to receive number values, ncol(df) means that the vector will be as long as the number of columns in our tibble 
+output
+```
+Now we run our loop:
 
+```{r}
 for (i in seq_along(df)) {            # 2. sequence - determines what to loop over - here we are looping along df, rather than down the length of each vector
   
-  output[[i]] <- median(df[[i]])      # 3. body - each time the loop runs it allocates a value to output, 
+  output[[i]] <- mean(df[[i]])      # 3. body - each time the loop runs it allocates a value to output, 
 }
 output
-# [1]  0.30851540  0.54294832 -0.51376911  0.0441560
+
 
 ```
+
+Each time the mean is calculate for one column in `df` this is then stored as an element in the previously empty `output` vector.
+
+`for()` loops are very useful for quickly iterating over a list, but because R prefers to store everything as a new object with each loop iteration, loops can become quite slow if they are complex, or running many processes and many iterations. As an alternative the `apply` family of functions from base R and `purrr::map` from tidyverse more broadly can be used as an alternative to loops.
+
+
+### Activity 1: Loop exercise
+
+We have made a function that converts values with a normal distribution into their z scores:
+
+```{r}
+
+z_score <- function(x) {
+  (x - min(x, na.rm = TRUE)) /  
+  diff(range(x, na.rm = TRUE))
+}
+
+```
+
+Assuming that *each* column in the dataframe `df` comes from a different population. How would you use a loop to apply this function to each column independently?
+
+Hint copy your `df` to a new object `z_df` with `z_df <- df` as a destination tibble for your new z scores.
+
+```{solution}
+
+``{r}
+
+z_df <- df
+
+for (i in 1:ncol(df)) { # loop through each element
+  z_df[i] <- z_score(df[[i]]) #apply function and store in out[]
+}
+z_df
+
+```
+
+
+## apply
+
+We can perform exactly the same action with `sapply`
+
+```{r}
+apply(df, 2,  z_score)
+
+```
+
+|Function|Arguments|Objective|Input|Output|
+|---|---|---|---|---|
+|apply|apply(X, MARGIN, FUN)|Apply a function to the rows, columns or both| Dataframe or matrix| vector, list or matrix|
+|lapply| lapply(X,FUN)|Apply a function to all the elements of the input| List, vector or dataframe| list|
+|sapply| sapply(X,FUN)| Apply a function to all the elements of the input| List, vector or dataframe| vector or matrix|
+
+```{r, eval = F}
+
+is.matrix(apply(df, 2,  z_score))
+
+is.data.frame(apply(df, 2,  z_score))
+
+
+```
+
+## map
+
+The basic syntax is map(`.x` = SEQUENCE, `.f` = FUNCTION, OTHER ARGUMENTS). In a bit more detail:
+
+* `.x` = are the inputs upon which the .f function will be iteratively applied - e.g. a vector of jurisdiction names, columns in a data frame, or a list of data frames
+
+* `.f` = is the function to apply to each element of the .x input - it could be a function like print() that already exists, or a custom function that you define. The function is often written after a tilde ~ (details below).
+A few more notes on syntax:
+
+* If the function needs no further arguments specified, it can be written with no parentheses and no tilde (e.g. `.f = mean`). To provide arguments that will be the same value for each iteration, provide them within `map()` but outside the `.f = argument`, such as the `na.rm = T` in `map(.x = my_list, .f = mean, na.rm=T)`.
+
+* You can use `.x` (or simply `.`) within the `.f = function` as a placeholder for the `.x` value of that iteration
+
+* Use tilde syntax (`~`) to have greater control over the function - write the function as normal with parentheses, such as: `map(.x = my_list, .f = ~mean(., na.rm = T))`. Use this syntax particularly if the value of an argument will change each iteration, or if it is the value `.x` itself.
+
+**The output of using` map()` is a list** - a list is an object class like a vector but whose elements can be of different classes. So, a list produced by `map()` could contain many data frames, or many vectors, many single values, or even many lists! There are alternative versions of `map()` explained below that produce other types of outputs (e.g. `map_dfr()` to produce a data frame, `map_chr()` to produce character vectors, and `map_dbl()` to produce numeric vectors).
+
+Basic `map()` will *always* return a `list`
+
+|Function| Data type returned|
+|------|------|
+|`map_lgl()`| returns a logical|
+| `map_int()`| returns an integer vector|
+| `map_dbl()`| returns a double vector|
+| `map_chr()`| returns a character vector|
+| `map_df()`| returns a data frame|
+
+```{r}
+
+map_df(.x = df, 
+       .f = z_score)
+
+df %>% 
+  map_df(z_score)
+
+df %>% 
+    map_df(~z_score(.))
+
+```
+
+
+## Anonymous functions
+
+In the previous chapter we were introduced to 
 
 ### Exercise for For Loops
 
@@ -976,16 +1160,11 @@ LPI_list <- LPI %>%
 
 I’ll also use `purrr::map()` to take the character values from the Class column itself for assigning names to the list. `map()` transforms an input by applying a function to each element of the input, and then returns a vector the same length as the input. In this immediate example, the input is the list_of_dfs and we apply the function `dplyr::pull()` to extract the Class variable from each data frame. We then repeat this approach to convert Class into character type with `as.character()` and take out a single value with `unique()`:
 
-```{r, eval = F}
-  names(LPI_list) <- LPI_list %>%
-  purrr::map(~pull(.,Class)) %>% # Pull out Species variable
-  purrr::map(~as.character(.)) %>% # Convert factor to character
-  purrr::map(~unique(.)) # Set this as names for list members
 
-names(LPI_list)
+
 
 ```
-```
+
  [1] "Actinopterygii"            "Amphibia"                  "Aves"                      "Cephalaspidomorphi"       
  [5] "Cetacea"                   "Chondrichthyes"            "Elasmobranchii"            "Holocephali"              
  [9] "Mammalia"                  "Myxini"                    "Perciformes"               "Reptilia"                 
@@ -1003,21 +1182,9 @@ Exporting the list of data frames into multiple CSV files will take a few more l
 
 
 ```{r, eval = F}
-# Step 1
-# Define a function for exporting csv with the desired file names and into the right path
-output_csv <- function(data, names){ 
-    folder_path <- "../data/"
-    
-    write_csv(data, paste0(folder_path, "class-", names, ".csv"))
-  }
-
-# Step 2
-list(data = LPI_list,
-     names = names(LPI_list)) %>% 
-  
-# Step 3
-  purrr::pmap(output_csv) 
-
+LPI_list %>% 
+  map(~write_csv(.x, 
+  paste0("data/", .x$Class[1], ".csv")))
 ```
 
 
@@ -1028,8 +1195,10 @@ The method for reading CSV files into a directory is slightly different, as you�
 
 ```{r, eval = F}
 
-list.files(path="../data/", pattern = "*.csv", full.names = T)
+data_path <- "data/"
 
+list.files(path = data_path, 
+           pattern = "*.csv")
 ```
 ```
  [1] "class-Actinopterygii.csv"     "class-Amphibia.csv"           "class-Aves.csv"               "class-Cephalaspidomorphi.csv"
@@ -1042,10 +1211,32 @@ list.files(path="../data/", pattern = "*.csv", full.names = T)
 The code below takes that list of files, pipes it to a `map_df()` function that runs read_csv on each file, then outputs everything toa dataframe
 
 ```{r, eval = F}
-LPI <- list.files(path="../data/", pattern = "*.csv", full.names = T) %>% 
-     map_df(~read_csv(.))
+data <- files %>%
+    map(~read_csv(.)) %>%    # read in all the files individually, using
+    # the function read_csv() from the readr package
+    reduce(rbind)        # reduce with rbind into one dataframe
+data
   
 ```
+
+
+```{r, eval = F}
+# Keep info on where data came from
+
+data <- tibble(filename = files) %>% 
+  mutate(file_contents = 
+           map(filename, 
+               ~ read_csv(file.path(data_path, .))))
+
+data
+```
+
+```{r}
+
+unnest(data)
+
+```
+
 
 I think `map_df` is extremely useful because you can feed it’s output directly into a ggplot2 call:
 
@@ -1066,6 +1257,19 @@ Now you have a simple grasp of `purrr` you should see that we have a list contai
 the `map()` function takes a list or vector as the first argument, and a function (prefixed by ~) as the second argument, it will then apply the function to each element of the list or vector. It will then return the output as new list. Simple! 
 
 ```{r, fig.width = 10}
+
+LPI_UK %>% 
+    filter(Common.Name == "House sparrow" | 
+               Common.Name == "Great tit" | 
+               Common.Name == "Corn bunting" | 
+               Common.Name == "Meadow pipit" ) %>% 
+    group_by(Common.Name) %>% 
+    nest() %>% 
+    mutate(plots = map(data, ~ ggplot(., aes (x = year, y = abundance)) +              
+            geom_point(size = 2, colour = "#00868B") +                                                
+            geom_smooth(method = lm, colour = "#00868B", fill = "#00868B") +          
+            labs(y = "Abundance\n", x = "")))
+
 
 my_plots_2 <- 
   map(Sp_list, ~ ggplot(., aes (x = year, y = abundance)) +              
@@ -1171,6 +1375,8 @@ return(x)
 ``
 
 ```
+
+
 
 ## Activity 5
 
