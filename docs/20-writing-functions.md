@@ -892,7 +892,7 @@ Below we have a simple for loop
 
 
 ```r
-output <- vector("double", ncol(df))  # 1. output having a predefined empty list of the right size works best, here we choose to make the vector "double" specifying that it is empty and ready to receive number values, ncol(df) means that the vector will be as long as the number of columns in our tibble 
+output <- vector("double", ncol(df))  # 1. output having a predefined empty vector of the right size works best, here we choose to make the vector "double" specifying that it is empty and ready to receive number values, ncol(df) means that the vector will be as long as the number of columns in our tibble 
 output
 ```
 
@@ -1028,11 +1028,15 @@ z_df
 
 ## apply
 
-We can perform exactly the same action with `sapply`
+We can perform exactly the same action with `apply` - the `apply` functions in R allow iteration without the use of loop constructs. They can be used for an input list or matrix.
+
+`MARGIN = 1` means apply function over rows
+
+`MARGIN = 2` means apply function over columns
 
 
 ```r
-apply(df, 2,  z_score)
+apply(df, MARGIN = 2,  z_score)
 ```
 
 ```
@@ -1064,6 +1068,8 @@ is.data.frame(apply(df, 2,  z_score))
 
 ## map
 
+`map` is the tidyverse equivalent of `apply` it work well with %>% and there are a few extended functions to it works better with tibbles and dataframes
+
 The basic syntax is map(`.x` = SEQUENCE, `.f` = FUNCTION, OTHER ARGUMENTS). In a bit more detail:
 
 * `.x` = are the inputs upon which the .f function will be iteratively applied - e.g. a vector of jurisdiction names, columns in a data frame, or a list of data frames
@@ -1079,7 +1085,7 @@ A few more notes on syntax:
 
 **The output of using` map()` is a list** - a list is an object class like a vector but whose elements can be of different classes. So, a list produced by `map()` could contain many data frames, or many vectors, many single values, or even many lists! There are alternative versions of `map()` explained below that produce other types of outputs (e.g. `map_dfr()` to produce a data frame, `map_chr()` to produce character vectors, and `map_dbl()` to produce numeric vectors).
 
-Basic `map()` will *always* return a `list`
+Basic `map()` will *always* return a `list`, othr variants return different data types.Unlike `apply` `map` will ONLY return one type of data, removing the potential for changing data types that occasionally happens when using `apply`. 
 
 |Function| Data type returned|
 |------|------|
@@ -1088,6 +1094,9 @@ Basic `map()` will *always* return a `list`
 | `map_dbl()`| returns a double vector|
 | `map_chr()`| returns a character vector|
 | `map_df()`| returns a data frame|
+
+
+Thre different ways of applyig syntax the `map` function
 
 
 ```r
@@ -1331,7 +1340,97 @@ df %>%
 
 ## Anonymous functions
 
-In the previous chapter we were introduced to 
+In the previous chapter we were introduced to anonymous functions, if we do not plan to use a function outside of this particular iteration example, we might choose just to write it in directly
+
+
+
+```r
+map_df(.x = df, 
+       .f = function(x) {
+  (x - min(x, na.rm = TRUE)) /  
+  diff(range(x, na.rm = TRUE))
+       }
+)
+```
+
+<div class="kable-table">
+
+<table>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> a </th>
+   <th style="text-align:right;"> b </th>
+   <th style="text-align:right;"> c </th>
+   <th style="text-align:right;"> d </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 0.3319492 </td>
+   <td style="text-align:right;"> 0.1526538 </td>
+   <td style="text-align:right;"> 0.7821670 </td>
+   <td style="text-align:right;"> 1.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.7647291 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.4733256 </td>
+   <td style="text-align:right;"> 0.5192783 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1.0000000 </td>
+   <td style="text-align:right;"> 0.0650610 </td>
+   <td style="text-align:right;"> 0.4981101 </td>
+   <td style="text-align:right;"> 0.4480343 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.3112994 </td>
+   <td style="text-align:right;"> 0.9430704 </td>
+   <td style="text-align:right;"> 0.5114592 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.8089534 </td>
+   <td style="text-align:right;"> 0.5734486 </td>
+   <td style="text-align:right;"> 0.3729606 </td>
+   <td style="text-align:right;"> 0.1678518 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.8313814 </td>
+   <td style="text-align:right;"> 0.2601181 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+   <td style="text-align:right;"> 0.3084450 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.5162933 </td>
+   <td style="text-align:right;"> 0.1427491 </td>
+   <td style="text-align:right;"> 1.0000000 </td>
+   <td style="text-align:right;"> 0.0000000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.5244878 </td>
+   <td style="text-align:right;"> 0.0255376 </td>
+   <td style="text-align:right;"> 0.2098653 </td>
+   <td style="text-align:right;"> 0.2556247 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.5192926 </td>
+   <td style="text-align:right;"> 0.0472186 </td>
+   <td style="text-align:right;"> 0.7084006 </td>
+   <td style="text-align:right;"> 0.5745131 </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 0.4243735 </td>
+   <td style="text-align:right;"> 1.0000000 </td>
+   <td style="text-align:right;"> 0.2532211 </td>
+   <td style="text-align:right;"> 0.5222322 </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+
+
 
 ### Exercise for For Loops
 
@@ -1350,52 +1449,14 @@ First we should import the data:
 
 
 ```r
-LPI <- read_csv("data/LPI_data_loops.csv")
+LPI_UK <- read_csv("data/LPI_data_loops.csv")
 ```
 
-Here is an example of a graph we can make from the data looking at Griffon Vulture changes in numbers over time. 
+
+Let's take a look at using functions and loops to help us build figures. 
 
 
 ```r
-vultureITCR <- LPI %>% 
-  filter(Common.Name == "Griffon vulture / Eurasian griffon") %>%
-  filter(Country.list==c("Croatia", "Italy"))
-
-vulture_scatter <- ggplot(vultureITCR, aes(x = year, y = abundance, colour = Country.list)) +
-    geom_point(size = 2) +  
-  # Changing point size
-    geom_smooth(method = lm, aes(fill = Country.list)) + 
-  # Adding a linear model fit and colour-coding by country
-    scale_fill_manual(values = c("#EE7600", "#00868B")) +               
-  # Adding custom colours
-    scale_colour_manual(values = c("#EE7600", "#00868B"),               
-                        # Adding custom colours
-                        labels = c("Croatia", "Italy")) +               
-  # Adding labels for the legend
-    ylab("Griffon vulture abundance\n") +                             
-    xlab("\nYear")  +
-		theme_bw() 
-
-vulture_scatter
-```
-
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;" />
-
-We can use custom themes (like the one you made earlier) to quickly update figures
-
-
-```r
-vulture_scatter+theme_custom()
-```
-
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;" />
-
-Now let's take a look at using functions and loops to help us build figures. 
-
-
-```r
-LPI_UK <- filter(LPI, Country.list == "United Kingdom")
-
 # Pick 4 species and make scatterplots with a simple regression model fits that show how the population has varied through time
 
 # Careful with the spelling of the names, it needs to match the names of the species in the LPI.UK dataframe
@@ -1452,7 +1513,7 @@ house_sparrow_scatter+
   plot_layout(design=layout)
 ```
 
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="20-writing-functions_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;" />
 
 This is ok, but arguably still requires a lot of code repetition. We have used the same lines of code four times to recreate four plots that are functionally the same. If we want to make any changes to the look of our plots we have to make four separate edits & mistakes can easily creep in. 
 
@@ -1485,12 +1546,10 @@ for (i in 1:length(Sp_list)) {
    # makes a list of all the plots generates
   my_plots[[i]] <- plot 
   
-  # prints each plot out as it is made
-  print(plot) 
+
+
 }
 ```
-
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" /><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-2.png" width="100%" style="display: block; margin: auto;" /><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-3.png" width="100%" style="display: block; margin: auto;" /><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-4.png" width="100%" style="display: block; margin: auto;" />
 
 So now we have a new object `my_plots` which is a list containing the four plots. This loop allowed us to code the details of our figures once, then iterate across four different groups.
 
@@ -1500,7 +1559,7 @@ wrap_plots(my_plots)+
   plot_layout(design=layout) 
 ```
 
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="20-writing-functions_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" />
 
 ```r
 #wrap_plots function from patchwork can take a list of ggplots
@@ -1508,6 +1567,9 @@ wrap_plots(my_plots)+
 
 What if you want to write a loop to save all four plots at once - can you modify the script to do this?
 
+<button id="displayTextunnamed-chunk-69" onclick="javascript:toggle('unnamed-chunk-69');">Show Solution</button>
+
+<div id="toggleTextunnamed-chunk-69" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body">
 
 ```r
 for (i in 1:length(Sp_list)) {                                    
@@ -1530,150 +1592,13 @@ for (i in 1:length(Sp_list)) {
   ggsave(plot, file=paste("figure/", sp.name, ".png", sep=''), dpi=900) 
 }
 ```
-
-
-### Iteration in R
-
-Loops are a fundamental part of programming in many languages - that's why they have been introduced as a concept with examples here. However in R, Loops are used much less often than in other languages. That is because R is a 'vector based language', something we often take for granted. But what does that mean?
-
-Here's an example - in the below written for R if we make a vector then apply a function to it, then it is applied to each element of the function, this is something we take for granted in R, but simply doesn't exist in languages like C++
-
-```
-x <- c(2,4,6,8,10)
-
-x/2
-
-# [1] 1 2 3 4 5
-
-```
-
-Instead for C++ we would be required to write a loop, in order to explicitly request that the division is applied to each element of the vector
-
-```
-for(i in seq_along(x)){
-x[i] = x[i]/2
-}
-x
-
-# [1] 1 2 3 4 5
-
-```
-
-A lot of functions in R are already vectorised and you don't even have to think about this concept. When we want more control over how this vectorization is applied, we have used the function `group_by()` It allows us to subset our data into hidden vectors, then command R to perform subsequent `dplyr` functions on each group separately. Because of the combined functionality of R's vectorization and dplyr's data tools you might find there is little need for loops. When we *do* wish to apply a function that isn't vectorize in the way we want - then tidyverse has an answer to this as well - purrr @R-purrr and the `map()` function
-
-### Learn to purrr
-
-There are also a few other advantages to using `purrr::map()` - you can use it with pipes %>%, it handles errors better than normal for loops, and the syntax is quite clean and simple! 
-
-**Remember** purrr is a very tidyverse focused method of iteration, so understanding for loops can be useful if you end up learning other programming languages in the future. 
-
-**purrr** is more focused on the function, and less obviously focused on the looping aspect, as you might be able to see below.
+</div></div></div>
 
 
 
-The basic syntax is map(`.x` = SEQUENCE, `.f` = FUNCTION, OTHER ARGUMENTS). In a bit more detail:
+## Automating analyses with `map`
 
-* `.x` = are the inputs upon which the .f function will be iteratively applied - e.g. a vector of jurisdiction names, columns in a data frame, or a list of data frames
-
-* `.f` = is the function to apply to each element of the .x input - it could be a function like print() that already exists, or a custom function that you define. The function is often written after a tilde ~ (details below).
-A few more notes on syntax:
-
-* If the function needs no further arguments specified, it can be written with no parentheses and no tilde (e.g. `.f = mean`). To provide arguments that will be the same value for each iteration, provide them within `map()` but outside the `.f = argument`, such as the `na.rm = T` in `map(.x = my_list, .f = mean, na.rm=T)`.
-
-* You can use `.x` (or simply `.`) within the `.f = function` as a placeholder for the `.x` value of that iteration
-
-* Use tilde syntax (`~`) to have greater control over the function - write the function as normal with parentheses, such as: `map(.x = my_list, .f = ~mean(., na.rm = T))`. Use this syntax particularly if the value of an argument will change each iteration, or if it is the value `.x` itself.
-
-**The output of using` map()` is a list** - a list is an object class like a vector but whose elements can be of different classes. So, a list produced by `map()` could contain many data frames, or many vectors, many single values, or even many lists! There are alternative versions of `map()` explained below that produce other types of outputs (e.g. `map_dfr()` to produce a data frame, `map_chr()` to produce character vectors, and `map_dbl()` to produce numeric vectors).
-
-Basic `map()` will *always* return a list of values
-
-* `map_lgl()` returns a logical
-* `map_int()` returns an integer vector
-* `map_dbl()` returns a double vector
-* `map_chr()` returns a character vector
-* `map_df()` returns a data frame
-
-
-
-```r
-# Apply n_distinct to all variables, returning a double (numeric) for each
-map_dbl_result <- LPI %>% 
-  map_dbl(n_distinct)
-
-# Print out result
-map_dbl_result
-
-# Print out type of result
-typeof(map_dbl_result)
-```
-
-```
-##         ...1        Class        Order  Common.Name Country.list       Region 
-##       182086           14          100         2947          357            9 
-##       system        biome        realm         year    abundance 
-##            4           33           16           45        30872 
-## [1] "double"
-```
-
-
-```r
-# Apply n_distinct to all variables, returning a dataframe
-map_df_result <- LPI %>% 
-  map_df(n_distinct)
-
-# Print out result
-map_df_result
-
-# Check if output is a data frame (tibble in this case)
-is_tibble(map_df_result)
-```
-
-<div class="kable-table">
-
-<table>
- <thead>
-  <tr>
-   <th style="text-align:right;"> ...1 </th>
-   <th style="text-align:right;"> Class </th>
-   <th style="text-align:right;"> Order </th>
-   <th style="text-align:right;"> Common.Name </th>
-   <th style="text-align:right;"> Country.list </th>
-   <th style="text-align:right;"> Region </th>
-   <th style="text-align:right;"> system </th>
-   <th style="text-align:right;"> biome </th>
-   <th style="text-align:right;"> realm </th>
-   <th style="text-align:right;"> year </th>
-   <th style="text-align:right;"> abundance </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:right;"> 182086 </td>
-   <td style="text-align:right;"> 14 </td>
-   <td style="text-align:right;"> 100 </td>
-   <td style="text-align:right;"> 2947 </td>
-   <td style="text-align:right;"> 357 </td>
-   <td style="text-align:right;"> 9 </td>
-   <td style="text-align:right;"> 4 </td>
-   <td style="text-align:right;"> 33 </td>
-   <td style="text-align:right;"> 16 </td>
-   <td style="text-align:right;"> 45 </td>
-   <td style="text-align:right;"> 30872 </td>
-  </tr>
-</tbody>
-</table>
-
-</div>
-
-```
-## [1] TRUE
-```
-
-
-## Reading and writing lots of files
-
-### Writing
+### Writing a dataframe into multiple csv files
 
 
 ```r
@@ -1702,7 +1627,7 @@ Exporting the list of data frames into multiple CSV files will take a few more l
 
 2. Create a named list where the names match the arguments of the function you’ve just defined (data and names), and should contain the objects that you would like to pass through to the function for the respective arguments. In this case, list_of_dfs will provide the three data frames, and names(list_of_dfs) will provide the names of those three data frames. This is necessary for running pmap(), which in my view is basically a super-powered version of map() that lets you iterate over multiple inputs simultaneously.
 
-3. `pmap()` will then iterate through the two sets of inputs through output_csv() (the inputs are used as arguments), which then writes the three CSV files with the file names you want. For the “writing” function, you could either use write_csv() from readr (part of tidyverse) or fwrite() from data.table, depending on your workflow / style.
+3. `map()` will then iterate through the two sets of inputs through output_csv() (the inputs are used as arguments), which then writes the three CSV files with the file names you want. For the “writing” function, you could either use write_csv() from readr (part of tidyverse) or fwrite() from data.table, depending on your workflow / style.
 
 
 
@@ -1714,7 +1639,7 @@ LPI_list %>%
 
 
 
-### Reading
+### Reading multiple csv files into one object
 
 The method for reading CSV files into a directory is slightly different, as you’ll need to find a way to identify or create a character vector of names of all the files that you want to load into R. To do this, we’ll use `list.files()`, which produces a character vector of the names of files or directories in the named directory:
 
@@ -1733,7 +1658,7 @@ list.files(path = data_path,
 
 ```
 
-The code below takes that list of files, pipes it to a `map_df()` function that runs read_csv on each file, then outputs everything toa dataframe
+The code below takes that list of files, pipes it to a `map_df()` function that runs read_csv on each file, then outputs everything to a 'nested' dataframe.
 
 
 ```r
@@ -1762,285 +1687,8 @@ data
 unnest(data)
 ```
 
-<div class="kable-table">
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:right;"> ...1 </th>
-   <th style="text-align:left;"> Class </th>
-   <th style="text-align:left;"> Order </th>
-   <th style="text-align:left;"> Common.Name </th>
-   <th style="text-align:left;"> Country.list </th>
-   <th style="text-align:left;"> Region </th>
-   <th style="text-align:left;"> system </th>
-   <th style="text-align:left;"> biome </th>
-   <th style="text-align:left;"> realm </th>
-   <th style="text-align:right;"> year </th>
-   <th style="text-align:right;"> abundance </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:right;"> 1512 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1970 </td>
-   <td style="text-align:right;"> 45 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 4225 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1971 </td>
-   <td style="text-align:right;"> 45 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 6838 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1972 </td>
-   <td style="text-align:right;"> 43 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 9482 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1973 </td>
-   <td style="text-align:right;"> 42 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 12354 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1974 </td>
-   <td style="text-align:right;"> 40 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 15408 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1975 </td>
-   <td style="text-align:right;"> 35 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 18749 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1976 </td>
-   <td style="text-align:right;"> 38 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 22135 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1977 </td>
-   <td style="text-align:right;"> 40 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 25626 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1978 </td>
-   <td style="text-align:right;"> 30 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 29186 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1979 </td>
-   <td style="text-align:right;"> 35 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 89306 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1992 </td>
-   <td style="text-align:right;"> 40 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 94914 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1993 </td>
-   <td style="text-align:right;"> 47 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 100589 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1994 </td>
-   <td style="text-align:right;"> 45 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 106398 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1995 </td>
-   <td style="text-align:right;"> 31 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 112343 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1996 </td>
-   <td style="text-align:right;"> 29 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 118486 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1997 </td>
-   <td style="text-align:right;"> 22 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 124297 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1998 </td>
-   <td style="text-align:right;"> 18 </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> 129806 </td>
-   <td style="text-align:left;"> Aves </td>
-   <td style="text-align:left;"> Passeriformes </td>
-   <td style="text-align:left;"> Meadow pipit </td>
-   <td style="text-align:left;"> United Kingdom </td>
-   <td style="text-align:left;"> Europe </td>
-   <td style="text-align:left;"> Terrestrial </td>
-   <td style="text-align:left;"> Temperate broadleaf and mixed forests </td>
-   <td style="text-align:left;"> Palearctic </td>
-   <td style="text-align:right;"> 1999 </td>
-   <td style="text-align:right;"> 21 </td>
-  </tr>
-</tbody>
-</table>
-
-</div>
-
-
-I think `map_df` is extremely useful because you can feed it’s output directly into a ggplot2 call:
-
-
-```r
-LPI %>% 
-  map_df(n_distinct) %>% 
-  # Convert to longer format
-  pivot_longer(everything(), names_to = "variable", values_to = "count") %>%
-  # Start plotting
-  ggplot(aes(x = variable, y = count)) +
-  geom_col() +
-  coord_flip()
-```
-
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-79-1.png" width="100%" style="display: block; margin: auto;" />
-
-
-Now you have a simple grasp of `purrr` you should see that we have a list containing species objects, and an anonymous function ~ggplot on the right. We can use this to quickly make four plots, just like we did with our for loops. 
-
-the `map()` function takes a list or vector as the first argument, and a function (prefixed by ~) as the second argument, it will then apply the function to each element of the list or vector. It will then return the output as new list. Simple! 
+### Plotting with `map`
 
 
 ```r
@@ -2055,20 +1703,9 @@ LPI_UK %>%
             geom_point(size = 2, colour = "#00868B") +                                                
             geom_smooth(method = lm, colour = "#00868B", fill = "#00868B") +          
             labs(y = "Abundance\n", x = "")))
-
-
-my_plots_2 <- 
-  map(Sp_list, ~ ggplot(., aes (x = year, y = abundance)) +              
-                      geom_point(size = 2, colour = "#00868B") +                                                
-                      geom_smooth(method = lm, colour = "#00868B", fill = "#00868B") +          
-                      theme_custom() +
-                      labs(y = "Abundance\n", x = "")) 
-
-
-wrap_plots(my_plots_2)+plot_layout(design=layout)
 ```
 
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-80-1.png" width="100%" style="display: block; margin: auto;" /><div class="kable-table">
+<div class="kable-table">
 
 <table>
  <thead>
@@ -2082,25 +1719,25 @@ wrap_plots(my_plots_2)+plot_layout(design=layout)
   <tr>
    <td style="text-align:left;"> Meadow pipit </td>
    <td style="text-align:left;"> 1512                                 , 4225                                 , 6838                                 , 9482                                 , 12354                                , 15408                                , 18749                                , 22135                                , 25626                                , 29186                                , 89306                                , 94914                                , 100589                               , 106398                               , 112343                               , 118486                               , 124297                               , 129806                               , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , 1970                                 , 1971                                 , 1972                                 , 1973                                 , 1974                                 , 1975                                 , 1976                                 , 1977                                 , 1978                                 , 1979                                 , 1992                                 , 1993                                 , 1994                                 , 1995                                 , 1996                                 , 1997                                 , 1998                                 , 1999                                 , 45                                   , 45                                   , 43                                   , 42                                   , 40                                   , 35                                   , 38                                   , 40                                   , 30                                   , 35                                   , 40                                   , 47                                   , 45                                   , 31                                   , 29                                   , 22                                   , 18                                   , 21 </td>
-   <td style="text-align:left;"> 1512, 4225, 6838, 9482, 12354, 15408, 18749, 22135, 25626, 29186, 89306, 94914, 100589, 106398, 112343, 118486, 124297, 129806, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 45, 45, 43, 42, 40, 35, 38, 40, 30, 35, 40, 47, 45, 31, 29, 22, 18, 21, &lt;environment: 0x00000000180b5810&gt;, &lt;environment: 0x0000000017e95c00&gt;, &lt;environment: 0x0000000017dcc1f0&gt;, ~year, ~abundance, &lt;environment: 0x00000000181998a0&gt;, &lt;environment: 0x0000000018197248&gt;, &lt;environment: 0x00000000181abd38&gt;, Abundance
+   <td style="text-align:left;"> 1512, 4225, 6838, 9482, 12354, 15408, 18749, 22135, 25626, 29186, 89306, 94914, 100589, 106398, 112343, 118486, 124297, 129806, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 45, 45, 43, 42, 40, 35, 38, 40, 30, 35, 40, 47, 45, 31, 29, 22, 18, 21, &lt;environment: 0x0000000018643280&gt;, &lt;environment: 0x000000001855f6e0&gt;, &lt;environment: 0x00000000184fb320&gt;, ~year, ~abundance, &lt;environment: 0x00000000186be328&gt;, &lt;environment: 0x00000000186bfb38&gt;, &lt;environment: 0x00000000186d8f60&gt;, Abundance
 , </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Great tit </td>
    <td style="text-align:left;"> 1645                                 , 1655                                 , 4345                                 , 4351                                 , 6956                                 , 6963                                 , 9599                                 , 9606                                 , 12468                                , 12476                                , 15523                                , 15531                                , 18861                                , 18867                                , 22243                                , 22250                                , 25729                                , 25735                                , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , 1970                                 , 1970                                 , 1971                                 , 1971                                 , 1972                                 , 1972                                 , 1973                                 , 1973                                 , 1974                                 , 1974                                 , 1975                                 , 1975                                 , 1976                                 , 1976                                 , 1977                                 , 1977                                 , 1978                                 , 1978                                 , 92                                   , 99                                   , 97                                   , 120                                  , 107                                  , 132                                  , 101                                  , 138                                  , 100                                  , 131                                  , 103                                  , 132                                  , 105                                  , 121                                  , 115                                  , 133                                  , 121                                  , 128 </td>
-   <td style="text-align:left;"> 1645, 1655, 4345, 4351, 6956, 6963, 9599, 9606, 12468, 12476, 15523, 15531, 18861, 18867, 22243, 22250, 25729, 25735, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1970, 1971, 1971, 1972, 1972, 1973, 1973, 1974, 1974, 1975, 1975, 1976, 1976, 1977, 1977, 1978, 1978, 92, 99, 97, 120, 107, 132, 101, 138, 100, 131, 103, 132, 105, 121, 115, 133, 121, 128, &lt;environment: 0x000000001850e860&gt;, &lt;environment: 0x0000000018446e08&gt;, &lt;environment: 0x000000001840e3a8&gt;, ~year, ~abundance, &lt;environment: 0x00000000185aa988&gt;, &lt;environment: 0x00000000185a6330&gt;, &lt;environment: 0x000000001860a8b8&gt;, Abundance
+   <td style="text-align:left;"> 1645, 1655, 4345, 4351, 6956, 6963, 9599, 9606, 12468, 12476, 15523, 15531, 18861, 18867, 22243, 22250, 25729, 25735, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1970, 1971, 1971, 1972, 1972, 1973, 1973, 1974, 1974, 1975, 1975, 1976, 1976, 1977, 1977, 1978, 1978, 92, 99, 97, 120, 107, 132, 101, 138, 100, 131, 103, 132, 105, 121, 115, 133, 121, 128, &lt;environment: 0x000000001899bf18&gt;, &lt;environment: 0x0000000018919348&gt;, &lt;environment: 0x00000000188e5f60&gt;, ~year, ~abundance, &lt;environment: 0x0000000018a26ae0&gt;, &lt;environment: 0x0000000018a281a0&gt;, &lt;environment: 0x0000000018a3fb80&gt;, Abundance
 , </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Corn bunting </td>
    <td style="text-align:left;"> 2060                                 , 4579                                 , 7179                                 , 9831                                 , 12693                                , 15760                                , 19076                                , 22448                                , 25913                                , 29473                                , 33150                                , 37000                                , 40731                                , 44566                                , 48638                                , 52845                                , 57245                                , 61785                                , 66611                                , 71335                                , 76392                                , 81635                                , 86930                                , 92755                                , 98457                                , 104215                               , 110044                               , 115898                               , 122041                               , 127800                               , 133524                               , 139120                               , 144291                               , 149396                               , 154079                               , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , 1970                                 , 1971                                 , 1972                                 , 1973                                 , 1974                                 , 1975                                 , 1976                                 , 1977                                 , 1978                                 , 1979                                 , 1980                                 , 1981                                 , 1982                                 , 1983                                 , 1984                                 , 1985                                 , 1986                                 , 1987                                 , 1988                                 , 1989                                 , 1990                                 , 1991                                 , 1992                                 , 1993                                 , 1994                                 , 1995                                 , 1996                                 , 1997                                 , 1998                                 , 1999                                 , 2000                                 , 2001                                 , 2002                                 , 2003                                 , 2004                                 , 887                                  , 946                                  , 970                                  , 987                                  , 964                                  , 911                                  , 852                                  , 793                                  , 739                                  , 692                                  , 651                                  , 592                                  , 527                                  , 450                                  , 379                                  , 314                                  , 267                                  , 238                                  , 226                                  , 214                                  , 208                                  , 202                                  , 190                                  , 185                                  , 173                                  , 161                                  , 149                                  , 143                                  , 137                                  , 131                                  , 125                                  , 120                                  , 120                                  , 125                                  , 125 </td>
-   <td style="text-align:left;"> 2060, 4579, 7179, 9831, 12693, 15760, 19076, 22448, 25913, 29473, 33150, 37000, 40731, 44566, 48638, 52845, 57245, 61785, 66611, 71335, 76392, 81635, 86930, 92755, 98457, 104215, 110044, 115898, 122041, 127800, 133524, 139120, 144291, 149396, 154079, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 887, 946, 970, 987, 964, 911, 852, 793, 739, 692, 651, 592, 527, 450, 379, 314, 267, 238, 226, 214, 208, 202, 190, 185, 173, 161, 149, 143, 137, 131, 125, 120, 120, 125, 125, &lt;environment: 0x00000000187bec70&gt;, &lt;environment: 0x0000000018674470&gt;, &lt;environment: 0x0000000018634c90&gt;, ~year, ~abundance, &lt;environment: 0x000000001888e0a8&gt;, &lt;environment: 0x000000001888f9d0&gt;, &lt;environment: 0x00000000188ab778&gt;, Abundance
+   <td style="text-align:left;"> 2060, 4579, 7179, 9831, 12693, 15760, 19076, 22448, 25913, 29473, 33150, 37000, 40731, 44566, 48638, 52845, 57245, 61785, 66611, 71335, 76392, 81635, 86930, 92755, 98457, 104215, 110044, 115898, 122041, 127800, 133524, 139120, 144291, 149396, 154079, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 887, 946, 970, 987, 964, 911, 852, 793, 739, 692, 651, 592, 527, 450, 379, 314, 267, 238, 226, 214, 208, 202, 190, 185, 173, 161, 149, 143, 137, 131, 125, 120, 120, 125, 125, &lt;environment: 0x00000000193c7628&gt;, &lt;environment: 0x0000000018a94ee0&gt;, &lt;environment: 0x0000000018a4b448&gt;, ~year, ~abundance, &lt;environment: 0x00000000195a8eb8&gt;, &lt;environment: 0x0000000019579098&gt;, &lt;environment: 0x00000000195d5df8&gt;, Abundance
 , </td>
   </tr>
   <tr>
    <td style="text-align:left;"> House sparrow </td>
    <td style="text-align:left;"> 20054                                , 20055                                , 23477                                , 23478                                , 26990                                , 26991                                , 30618                                , 30619                                , 34404                                , 34405                                , 38229                                , 38230                                , 42026                                , 42027                                , 45922                                , 45923                                , 50068                                , 50069                                , 54407                                , 54408                                , 58888                                , 58889                                , 63689                                , 63690                                , 68378                                , 68379                                , 73174                                , 73175                                , 78422                                , 78423                                , 83666                                , 83667                                , 89245                                , 89246                                , 94852                                , 94853                                , 100528                               , 100529                               , 106368                               , 106369                               , 112313                               , 112314                               , 118454                               , 118455                               , 124271                               , 124272                               , 129803                               , 129804                               , 135615                               , 135616                               , 141082                               , 141083                               , 146137                               , 146138                               , 151145                               , 151146                               , 155752                               , 155753                               , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Aves                                 , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , Passeriformes                        , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , United Kingdom                       , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Europe                               , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Terrestrial                          , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , Palearctic                           , 1976                                 , 1976                                 , 1977                                 , 1977                                 , 1978                                 , 1978                                 , 1979                                 , 1979                                 , 1980                                 , 1980                                 , 1981                                 , 1981                                 , 1982                                 , 1982                                 , 1983                                 , 1983                                 , 1984                                 , 1984                                 , 1985                                 , 1985                                 , 1986                                 , 1986                                 , 1987                                 , 1987                                 , 1988                                 , 1988                                 , 1989                                 , 1989                                 , 1990                                 , 1990                                 , 1991                                 , 1991                                 , 1992                                 , 1992                                 , 1993                                 , 1993                                 , 1994                                 , 1994                                 , 1995                                 , 1995                                 , 1996                                 , 1996                                 , 1997                                 , 1997                                 , 1998                                 , 1998                                 , 1999                                 , 1999                                 , 2000                                 , 2000                                 , 2001                                 , 2001                                 , 2002                                 , 2002                                 , 2003                                 , 2003                                 , 2004                                 , 2004                                 , 328                                  , 328                                  , 318                                  , 318                                  , 306                                  , 306                                  , 291                                  , 291                                  , 264                                  , 264                                  , 234                                  , 234                                  , 210                                  , 210                                  , 192                                  , 192                                  , 188                                  , 188                                  , 185                                  , 185                                  , 183                                  , 183                                  , 178                                  , 178                                  , 168                                  , 168                                  , 161                                  , 161                                  , 151                                  , 151                                  , 141                                  , 141                                  , 131                                  , 131                                  , 126                                  , 126                                  , 121                                  , 121                                  , 119                                  , 119                                  , 119                                  , 119                                  , 114                                  , 114                                  , 111                                  , 111                                  , 109                                  , 109                                  , 106                                  , 106                                  , 106                                  , 106                                  , 106                                  , 106                                  , 106                                  , 106                                  , 109                                  , 109 </td>
-   <td style="text-align:left;"> 20054, 20055, 23477, 23478, 26990, 26991, 30618, 30619, 34404, 34405, 38229, 38230, 42026, 42027, 45922, 45923, 50068, 50069, 54407, 54408, 58888, 58889, 63689, 63690, 68378, 68379, 73174, 73175, 78422, 78423, 83666, 83667, 89245, 89246, 94852, 94853, 100528, 100529, 106368, 106369, 112313, 112314, 118454, 118455, 124271, 124272, 129803, 129804, 135615, 135616, 141082, 141083, 146137, 146138, 151145, 151146, 155752, 155753, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1976, 1976, 1977, 1977, 1978, 1978, 1979, 1979, 1980, 1980, 1981, 1981, 1982, 1982, 1983, 1983, 1984, 1984, 1985, 1985, 1986, 1986, 1987, 1987, 1988, 1988, 1989, 1989, 1990, 1990, 1991, 1991, 1992, 1992, 1993, 1993, 1994, 1994, 1995, 1995, 1996, 1996, 1997, 1997, 1998, 1998, 1999, 1999, 2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 328, 328, 318, 318, 306, 306, 291, 291, 264, 264, 234, 234, 210, 210, 192, 192, 188, 188, 185, 185, 183, 183, 178, 178, 168, 168, 161, 161, 151, 151, 141, 141, 131, 131, 126, 126, 121, 121, 119, 119, 119, 119, 114, 114, 111, 111, 109, 109, 106, 106, 106, 106, 106, 106, 106, 106, 109, 109, &lt;environment: 0x000000001837c580&gt;, &lt;environment: 0x0000000018310c38&gt;, &lt;environment: 0x00000000181bb980&gt;, ~year, ~abundance, &lt;environment: 0x00000000183ec8e8&gt;, &lt;environment: 0x00000000183ea370&gt;, &lt;environment: 0x00000000183fbdc0&gt;, Abundance
+   <td style="text-align:left;"> 20054, 20055, 23477, 23478, 26990, 26991, 30618, 30619, 34404, 34405, 38229, 38230, 42026, 42027, 45922, 45923, 50068, 50069, 54407, 54408, 58888, 58889, 63689, 63690, 68378, 68379, 73174, 73175, 78422, 78423, 83666, 83667, 89245, 89246, 94852, 94853, 100528, 100529, 106368, 106369, 112313, 112314, 118454, 118455, 124271, 124272, 129803, 129804, 135615, 135616, 141082, 141083, 146137, 146138, 151145, 151146, 155752, 155753, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1976, 1976, 1977, 1977, 1978, 1978, 1979, 1979, 1980, 1980, 1981, 1981, 1982, 1982, 1983, 1983, 1984, 1984, 1985, 1985, 1986, 1986, 1987, 1987, 1988, 1988, 1989, 1989, 1990, 1990, 1991, 1991, 1992, 1992, 1993, 1993, 1994, 1994, 1995, 1995, 1996, 1996, 1997, 1997, 1998, 1998, 1999, 1999, 2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 328, 328, 318, 318, 306, 306, 291, 291, 264, 264, 234, 234, 210, 210, 192, 192, 188, 188, 185, 185, 183, 183, 178, 178, 168, 168, 161, 161, 151, 151, 141, 141, 131, 131, 126, 126, 121, 121, 119, 119, 119, 119, 114, 114, 111, 111, 109, 109, 106, 106, 106, 106, 106, 106, 106, 106, 109, 109, &lt;environment: 0x0000000018803880&gt;, &lt;environment: 0x000000001872fbd8&gt;, &lt;environment: 0x00000000186e3980&gt;, ~year, ~abundance, &lt;environment: 0x000000001889b578&gt;, &lt;environment: 0x00000000188990a8&gt;, &lt;environment: 0x00000000188cbcf8&gt;, Abundance
 , </td>
   </tr>
 </tbody>
@@ -2143,9 +1780,9 @@ fum(3:7,(1:5)^2)
 
 **Question 3.** Write a function that adds two numbers and divides the results by 2.
 
-<button id="displayTextunnamed-chunk-83" onclick="javascript:toggle('unnamed-chunk-83');">Show Solution</button>
+<button id="displayTextunnamed-chunk-79" onclick="javascript:toggle('unnamed-chunk-79');">Show Solution</button>
 
-<div id="toggleTextunnamed-chunk-83" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body">
+<div id="toggleTextunnamed-chunk-79" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body">
 
 ```r
 addtwo <- function(num1, num2){
@@ -2155,7 +1792,7 @@ addtwo <- function(num1, num2){
 </div></div></div>
 
 
-**Question 4.**  Recode values of a datase. tFor example, if you have a survey of age data, you may want to convert any crazy values (like anything below 0 or above 100) to NA. Write a function called recode.integer() with 3 arguments: x, lb, and ub. We’ll assume that x is a numeric vector. The function should look at the values of x, convert any values below lb and above ub to NA, and then return the resulting vector. Here is the function in action:
+**Question 4.**  Recode values of a datase. For example, if you have a survey of age data, you may want to convert any crazy values (like anything below 0 or above 100) to NA. Write a function called recode.integer() with 3 arguments: x, lb, and ub. We’ll assume that x is a numeric vector. The function should look at the values of x, convert any values below lb and above ub to NA, and then return the resulting vector. Here is the function in action:
 
 Some hints: there are multiple ways to solve this. 
 
@@ -2172,9 +1809,9 @@ recode.integer(x = vector,
                ub = 10)
 ```
 
-<button id="displayTextunnamed-chunk-86" onclick="javascript:toggle('unnamed-chunk-86');">Show Solution</button>
+<button id="displayTextunnamed-chunk-82" onclick="javascript:toggle('unnamed-chunk-82');">Show Solution</button>
 
-<div id="toggleTextunnamed-chunk-86" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body">
+<div id="toggleTextunnamed-chunk-82" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body">
 
 ```r
 recode.integer <- function(x, lb, ub){
@@ -2215,7 +1852,7 @@ Below are some links you may find useful
 
 * [R4DS - intro to programming](https://r4ds.had.co.nz/program-intro.html)
 
-* [Coding club](https://ourcodingclub.github.io/tutorials/funandloops/#function)
+
 
 * [EpiR handbook](https://epirhandbook.com/en/iteration-loops-and-lists.html)
 

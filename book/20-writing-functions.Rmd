@@ -748,7 +748,7 @@ So the above code works, but it is repetitive, applying the same function again 
 Below we have a simple for loop 
 
 ```{r}
-output <- vector("double", ncol(df))  # 1. output having a predefined empty list of the right size works best, here we choose to make the vector "double" specifying that it is empty and ready to receive number values, ncol(df) means that the vector will be as long as the number of columns in our tibble 
+output <- vector("double", ncol(df))  # 1. output having a predefined empty vector of the right size works best, here we choose to make the vector "double" specifying that it is empty and ready to receive number values, ncol(df) means that the vector will be as long as the number of columns in our tibble 
 output
 ```
 Now we run our loop:
@@ -801,10 +801,14 @@ z_df
 
 ## apply
 
-We can perform exactly the same action with `sapply`
+We can perform exactly the same action with `apply` - the `apply` functions in R allow iteration without the use of loop constructs. They can be used for an input list or matrix.
+
+`MARGIN = 1` means apply function over rows
+
+`MARGIN = 2` means apply function over columns
 
 ```{r}
-apply(df, 2,  z_score)
+apply(df, MARGIN = 2,  z_score)
 
 ```
 
@@ -825,6 +829,8 @@ is.data.frame(apply(df, 2,  z_score))
 
 ## map
 
+`map` is the tidyverse equivalent of `apply` it work well with %>% and there are a few extended functions to it works better with tibbles and dataframes
+
 The basic syntax is map(`.x` = SEQUENCE, `.f` = FUNCTION, OTHER ARGUMENTS). In a bit more detail:
 
 * `.x` = are the inputs upon which the .f function will be iteratively applied - e.g. a vector of jurisdiction names, columns in a data frame, or a list of data frames
@@ -840,7 +846,7 @@ A few more notes on syntax:
 
 **The output of using` map()` is a list** - a list is an object class like a vector but whose elements can be of different classes. So, a list produced by `map()` could contain many data frames, or many vectors, many single values, or even many lists! There are alternative versions of `map()` explained below that produce other types of outputs (e.g. `map_dfr()` to produce a data frame, `map_chr()` to produce character vectors, and `map_dbl()` to produce numeric vectors).
 
-Basic `map()` will *always* return a `list`
+Basic `map()` will *always* return a `list`, othr variants return different data types.Unlike `apply` `map` will ONLY return one type of data, removing the potential for changing data types that occasionally happens when using `apply`. 
 
 |Function| Data type returned|
 |------|------|
@@ -849,6 +855,9 @@ Basic `map()` will *always* return a `list`
 | `map_dbl()`| returns a double vector|
 | `map_chr()`| returns a character vector|
 | `map_df()`| returns a data frame|
+
+
+Thre different ways of applyig syntax the `map` function
 
 ```{r}
 
@@ -866,7 +875,21 @@ df %>%
 
 ## Anonymous functions
 
-In the previous chapter we were introduced to 
+In the previous chapter we were introduced to anonymous functions, if we do not plan to use a function outside of this particular iteration example, we might choose just to write it in directly
+
+
+```{r}
+
+map_df(.x = df, 
+       .f = function(x) {
+  (x - min(x, na.rm = TRUE)) /  
+  diff(range(x, na.rm = TRUE))
+       }
+)
+
+```
+
+
 
 ### Exercise for For Loops
 
@@ -886,51 +909,20 @@ downloadthis::download_link(
 First we should import the data:
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-LPI <- read_csv(here("book", "files", "LPI_data_loops.csv"))
+LPI_UK <- read_csv(here("book", "files", "LPI_data_loops.csv"))
 
 ```
 
 ```{r, eval=FALSE, message=FALSE, warning=FALSE}
-LPI <- read_csv("data/LPI_data_loops.csv")
+LPI_UK <- read_csv("data/LPI_data_loops.csv")
 
 ```
 
-Here is an example of a graph we can make from the data looking at Griffon Vulture changes in numbers over time. 
 
-```{r, eval=TRUE, message=FALSE}
-
-vultureITCR <- LPI %>% 
-  filter(Common.Name == "Griffon vulture / Eurasian griffon") %>%
-  filter(Country.list==c("Croatia", "Italy"))
-
-vulture_scatter <- ggplot(vultureITCR, aes(x = year, y = abundance, colour = Country.list)) +
-    geom_point(size = 2) +  
-  # Changing point size
-    geom_smooth(method = lm, aes(fill = Country.list)) + 
-  # Adding a linear model fit and colour-coding by country
-    scale_fill_manual(values = c("#EE7600", "#00868B")) +               
-  # Adding custom colours
-    scale_colour_manual(values = c("#EE7600", "#00868B"),               
-                        # Adding custom colours
-                        labels = c("Croatia", "Italy")) +               
-  # Adding labels for the legend
-    ylab("Griffon vulture abundance\n") +                             
-    xlab("\nYear")  +
-		theme_bw() 
-
-vulture_scatter
-```
-
-We can use custom themes (like the one you made earlier) to quickly update figures
-
-```{r}
-vulture_scatter+theme_custom()
-```
-
-Now let's take a look at using functions and loops to help us build figures. 
+Let's take a look at using functions and loops to help us build figures. 
 
 ```{r, eval=TRUE, message=FALSE, warning=FALSE}
-LPI_UK <- filter(LPI, Country.list == "United Kingdom")
+
 
 # Pick 4 species and make scatterplots with a simple regression model fits that show how the population has varied through time
 
@@ -1018,8 +1010,8 @@ for (i in 1:length(Sp_list)) {
    # makes a list of all the plots generates
   my_plots[[i]] <- plot 
   
-  # prints each plot out as it is made
-  print(plot) 
+
+
 }
 ```
 
@@ -1034,7 +1026,9 @@ wrap_plots(my_plots)+
 
 What if you want to write a loop to save all four plots at once - can you modify the script to do this?
 
-```{r, eval = FALSE}
+```{solution}
+
+``{r, eval = FALSE}
 for (i in 1:length(Sp_list)) {                                    
   # For every item along the length of Sp_list we want R to perform the following functions
   data <- as.data.frame(Sp_list[i])                               
@@ -1054,102 +1048,16 @@ for (i in 1:length(Sp_list)) {
 # use paste to automatically add filename
   ggsave(plot, file=paste("figure/", sp.name, ".png", sep=''), dpi=900) 
 }
-```
 
-
-### Iteration in R
-
-Loops are a fundamental part of programming in many languages - that's why they have been introduced as a concept with examples here. However in R, Loops are used much less often than in other languages. That is because R is a 'vector based language', something we often take for granted. But what does that mean?
-
-Here's an example - in the below written for R if we make a vector then apply a function to it, then it is applied to each element of the function, this is something we take for granted in R, but simply doesn't exist in languages like C++
-
-```
-x <- c(2,4,6,8,10)
-
-x/2
-
-# [1] 1 2 3 4 5
-
-```
-
-Instead for C++ we would be required to write a loop, in order to explicitly request that the division is applied to each element of the vector
-
-```
-for(i in seq_along(x)){
-x[i] = x[i]/2
-}
-x
-
-# [1] 1 2 3 4 5
-
-```
-
-A lot of functions in R are already vectorised and you don't even have to think about this concept. When we want more control over how this vectorization is applied, we have used the function `group_by()` It allows us to subset our data into hidden vectors, then command R to perform subsequent `dplyr` functions on each group separately. Because of the combined functionality of R's vectorization and dplyr's data tools you might find there is little need for loops. When we *do* wish to apply a function that isn't vectorize in the way we want - then tidyverse has an answer to this as well - purrr @R-purrr and the `map()` function
-
-### Learn to purrr
-
-There are also a few other advantages to using `purrr::map()` - you can use it with pipes %>%, it handles errors better than normal for loops, and the syntax is quite clean and simple! 
-
-**Remember** purrr is a very tidyverse focused method of iteration, so understanding for loops can be useful if you end up learning other programming languages in the future. 
-
-**purrr** is more focused on the function, and less obviously focused on the looping aspect, as you might be able to see below.
-
-
-
-The basic syntax is map(`.x` = SEQUENCE, `.f` = FUNCTION, OTHER ARGUMENTS). In a bit more detail:
-
-* `.x` = are the inputs upon which the .f function will be iteratively applied - e.g. a vector of jurisdiction names, columns in a data frame, or a list of data frames
-
-* `.f` = is the function to apply to each element of the .x input - it could be a function like print() that already exists, or a custom function that you define. The function is often written after a tilde ~ (details below).
-A few more notes on syntax:
-
-* If the function needs no further arguments specified, it can be written with no parentheses and no tilde (e.g. `.f = mean`). To provide arguments that will be the same value for each iteration, provide them within `map()` but outside the `.f = argument`, such as the `na.rm = T` in `map(.x = my_list, .f = mean, na.rm=T)`.
-
-* You can use `.x` (or simply `.`) within the `.f = function` as a placeholder for the `.x` value of that iteration
-
-* Use tilde syntax (`~`) to have greater control over the function - write the function as normal with parentheses, such as: `map(.x = my_list, .f = ~mean(., na.rm = T))`. Use this syntax particularly if the value of an argument will change each iteration, or if it is the value `.x` itself.
-
-**The output of using` map()` is a list** - a list is an object class like a vector but whose elements can be of different classes. So, a list produced by `map()` could contain many data frames, or many vectors, many single values, or even many lists! There are alternative versions of `map()` explained below that produce other types of outputs (e.g. `map_dfr()` to produce a data frame, `map_chr()` to produce character vectors, and `map_dbl()` to produce numeric vectors).
-
-Basic `map()` will *always* return a list of values
-
-* `map_lgl()` returns a logical
-* `map_int()` returns an integer vector
-* `map_dbl()` returns a double vector
-* `map_chr()` returns a character vector
-* `map_df()` returns a data frame
-
-
-```{r}
-# Apply n_distinct to all variables, returning a double (numeric) for each
-map_dbl_result <- LPI %>% 
-  map_dbl(n_distinct)
-
-# Print out result
-map_dbl_result
-
-# Print out type of result
-typeof(map_dbl_result)
-
-```
-
-```{r}
-# Apply n_distinct to all variables, returning a dataframe
-map_df_result <- LPI %>% 
-  map_df(n_distinct)
-
-# Print out result
-map_df_result
-
-# Check if output is a data frame (tibble in this case)
-is_tibble(map_df_result)
+``
 
 ```
 
 
-## Reading and writing lots of files
 
-### Writing
+## Automating analyses with `map`
+
+### Writing a dataframe into multiple csv files
 
 ```{r, eval = F}
 LPI_list <- LPI %>% 
@@ -1178,7 +1086,7 @@ Exporting the list of data frames into multiple CSV files will take a few more l
 
 2. Create a named list where the names match the arguments of the function you’ve just defined (data and names), and should contain the objects that you would like to pass through to the function for the respective arguments. In this case, list_of_dfs will provide the three data frames, and names(list_of_dfs) will provide the names of those three data frames. This is necessary for running pmap(), which in my view is basically a super-powered version of map() that lets you iterate over multiple inputs simultaneously.
 
-3. `pmap()` will then iterate through the two sets of inputs through output_csv() (the inputs are used as arguments), which then writes the three CSV files with the file names you want. For the “writing” function, you could either use write_csv() from readr (part of tidyverse) or fwrite() from data.table, depending on your workflow / style.
+3. `map()` will then iterate through the two sets of inputs through output_csv() (the inputs are used as arguments), which then writes the three CSV files with the file names you want. For the “writing” function, you could either use write_csv() from readr (part of tidyverse) or fwrite() from data.table, depending on your workflow / style.
 
 
 ```{r, eval = F}
@@ -1189,7 +1097,7 @@ LPI_list %>%
 
 
 
-### Reading
+### Reading multiple csv files into one object
 
 The method for reading CSV files into a directory is slightly different, as you’ll need to find a way to identify or create a character vector of names of all the files that you want to load into R. To do this, we’ll use `list.files()`, which produces a character vector of the names of files or directories in the named directory:
 
@@ -1208,7 +1116,7 @@ list.files(path = data_path,
 
 ```
 
-The code below takes that list of files, pipes it to a `map_df()` function that runs read_csv on each file, then outputs everything toa dataframe
+The code below takes that list of files, pipes it to a `map_df()` function that runs read_csv on each file, then outputs everything to a 'nested' dataframe.
 
 ```{r, eval = F}
 data <- files %>%
@@ -1231,30 +1139,14 @@ data <- tibble(filename = files) %>%
 data
 ```
 
-```{r}
+```{r, eval = F}
 
 unnest(data)
 
 ```
 
 
-I think `map_df` is extremely useful because you can feed it’s output directly into a ggplot2 call:
-
-```{r}
-LPI %>% 
-  map_df(n_distinct) %>% 
-  # Convert to longer format
-  pivot_longer(everything(), names_to = "variable", values_to = "count") %>%
-  # Start plotting
-  ggplot(aes(x = variable, y = count)) +
-  geom_col() +
-  coord_flip()
-```
-
-
-Now you have a simple grasp of `purrr` you should see that we have a list containing species objects, and an anonymous function ~ggplot on the right. We can use this to quickly make four plots, just like we did with our for loops. 
-
-the `map()` function takes a list or vector as the first argument, and a function (prefixed by ~) as the second argument, it will then apply the function to each element of the list or vector. It will then return the output as new list. Simple! 
+### Plotting with `map`
 
 ```{r, fig.width = 10}
 
@@ -1270,16 +1162,6 @@ LPI_UK %>%
             geom_smooth(method = lm, colour = "#00868B", fill = "#00868B") +          
             labs(y = "Abundance\n", x = "")))
 
-
-my_plots_2 <- 
-  map(Sp_list, ~ ggplot(., aes (x = year, y = abundance)) +              
-                      geom_point(size = 2, colour = "#00868B") +                                                
-                      geom_smooth(method = lm, colour = "#00868B", fill = "#00868B") +          
-                      theme_custom() +
-                      labs(y = "Abundance\n", x = "")) 
-
-
-wrap_plots(my_plots_2)+plot_layout(design=layout)
 
 ```
 
@@ -1332,7 +1214,7 @@ addtwo <- function(num1, num2){
 ```
 
 
-**Question 4.**  Recode values of a datase. tFor example, if you have a survey of age data, you may want to convert any crazy values (like anything below 0 or above 100) to NA. Write a function called recode.integer() with 3 arguments: x, lb, and ub. We’ll assume that x is a numeric vector. The function should look at the values of x, convert any values below lb and above ub to NA, and then return the resulting vector. Here is the function in action:
+**Question 4.**  Recode values of a datase. For example, if you have a survey of age data, you may want to convert any crazy values (like anything below 0 or above 100) to NA. Write a function called recode.integer() with 3 arguments: x, lb, and ub. We’ll assume that x is a numeric vector. The function should look at the values of x, convert any values below lb and above ub to NA, and then return the resulting vector. Here is the function in action:
 
 Some hints: there are multiple ways to solve this. 
 
@@ -1392,7 +1274,7 @@ Below are some links you may find useful
 
 * [R4DS - intro to programming](https://r4ds.had.co.nz/program-intro.html)
 
-* [Coding club](https://ourcodingclub.github.io/tutorials/funandloops/#function)
+
 
 * [EpiR handbook](https://epirhandbook.com/en/iteration-loops-and-lists.html)
 

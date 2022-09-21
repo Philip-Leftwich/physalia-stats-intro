@@ -431,11 +431,10 @@ apply
 map
 anonymous-functions-1
 exercise-for-for-loops
-iteration-in-r
-learn-to-purrr
-reading-and-writing-lots-of-files
-writing
-reading
+automating-analyses-with-map
+writing-a-dataframe-into-multiple-csv-files
+reading-multiple-csv-files-into-one-object
+plotting-with-map
 activity-4-test-yourself
 activity-5
 summary-10

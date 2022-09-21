@@ -525,7 +525,7 @@ d
 <p>So the above code works, but it is repetitive, applying the same function again and again.</p>
 <p>Below we have a simple for loop</p>
 <div class="sourceCode" id="cb508"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">vector</a></span><span class="op">(</span><span class="st">"double"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>  <span class="co"># 1. output having a predefined empty list of the right size works best, here we choose to make the vector "double" specifying that it is empty and ready to receive number values, ncol(df) means that the vector will be as long as the number of columns in our tibble </span>
+<code class="sourceCode R"><span class="va">output</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">vector</a></span><span class="op">(</span><span class="st">"double"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span>  <span class="co"># 1. output having a predefined empty vector of the right size works best, here we choose to make the vector "double" specifying that it is empty and ready to receive number values, ncol(df) means that the vector will be as long as the number of columns in our tibble </span>
 <span class="va">output</span></code></pre></div>
 <pre><code>## [1] 0 0 0 0</code></pre>
 <p>Now we run our loop:</p>
@@ -735,9 +735,11 @@ d
 <h2>
 <span class="header-section-number">19.4</span> apply<a class="anchor" aria-label="anchor" href="#apply"><i class="fas fa-link"></i></a>
 </h2>
-<p>We can perform exactly the same action with <code>sapply</code></p>
+<p>We can perform exactly the same action with <code>apply</code> - the <code>apply</code> functions in R allow iteration without the use of loop constructs. They can be used for an input list or matrix.</p>
+<p><code>MARGIN = 1</code> means apply function over rows</p>
+<p><code>MARGIN = 2</code> means apply function over columns</p>
 <div class="sourceCode" id="cb514"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">2</span>,  <span class="va">z_score</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">df</span>, MARGIN <span class="op">=</span> <span class="fl">2</span>,  <span class="va">z_score</span><span class="op">)</span></code></pre></div>
 <pre><code>##               a          b         c         d
 ##  [1,] 0.3319492 0.15265375 0.7821670 1.0000000
 ##  [2,] 0.7647291 0.00000000 0.4733256 0.5192783
@@ -797,6 +799,7 @@ d
 <h2>
 <span class="header-section-number">19.5</span> map<a class="anchor" aria-label="anchor" href="#map"><i class="fas fa-link"></i></a>
 </h2>
+<p><code>map</code> is the tidyverse equivalent of <code>apply</code> it work well with %&gt;% and there are a few extended functions to it works better with tibbles and dataframes</p>
 <p>The basic syntax is map(<code>.x</code> = SEQUENCE, <code>.f</code> = FUNCTION, OTHER ARGUMENTS). In a bit more detail:</p>
 <ul>
 <li><p><code>.x</code> = are the inputs upon which the .f function will be iteratively applied - e.g. a vector of jurisdiction names, columns in a data frame, or a list of data frames</p></li>
@@ -807,7 +810,7 @@ A few more notes on syntax:</p></li>
 <li><p>Use tilde syntax (<code><a href="https://rdrr.io/r/base/tilde.html">~</a></code>) to have greater control over the function - write the function as normal with parentheses, such as: <code>map(.x = my_list, .f = ~mean(., na.rm = T))</code>. Use this syntax particularly if the value of an argument will change each iteration, or if it is the value <code>.x</code> itself.</p></li>
 </ul>
 <p><strong>The output of using<code>map()</code> is a list</strong> - a list is an object class like a vector but whose elements can be of different classes. So, a list produced by <code>map()</code> could contain many data frames, or many vectors, many single values, or even many lists! There are alternative versions of <code>map()</code> explained below that produce other types of outputs (e.g. <code>map_dfr()</code> to produce a data frame, <code>map_chr()</code> to produce character vectors, and <code>map_dbl()</code> to produce numeric vectors).</p>
-<p>Basic <code>map()</code> will <em>always</em> return a <code>list</code></p>
+<p>Basic <code>map()</code> will <em>always</em> return a <code>list</code>, othr variants return different data types.Unlike <code>apply</code> <code>map</code> will ONLY return one type of data, removing the potential for changing data types that occasionally happens when using <code>apply</code>.</p>
 <div class="inline-table"><table class="table table-sm">
 <thead><tr class="header">
 <th>Function</th>
@@ -836,6 +839,7 @@ A few more notes on syntax:</p></li>
 </tr>
 </tbody>
 </table></div>
+<p>Thre different ways of applyig syntax the <code>map</code> function</p>
 <div class="sourceCode" id="cb517"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">map_df</span><span class="op">(</span>.x <span class="op">=</span> <span class="va">df</span>, 
        .f <span class="op">=</span> <span class="va">z_score</span><span class="op">)</span>
@@ -1330,7 +1334,174 @@ d
 <h2>
 <span class="header-section-number">19.6</span> Anonymous functions<a class="anchor" aria-label="anchor" href="#anonymous-functions-1"><i class="fas fa-link"></i></a>
 </h2>
-<p>In the previous chapter we were introduced to</p>
+<p>In the previous chapter we were introduced to anonymous functions, if we do not plan to use a function outside of this particular iteration example, we might choose just to write it in directly</p>
+<div class="sourceCode" id="cb518"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">map_df</span><span class="op">(</span>.x <span class="op">=</span> <span class="va">df</span>, 
+       .f <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span>  
+  <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+       <span class="op">}</span>
+<span class="op">)</span></code></pre></div>
+<div class="kable-table">
+<div class="inline-table"><table class="table table-sm">
+<thead><tr>
+<th style="text-align:right;">
+a
+</th>
+<th style="text-align:right;">
+b
+</th>
+<th style="text-align:right;">
+c
+</th>
+<th style="text-align:right;">
+d
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0.3319492
+</td>
+<td style="text-align:right;">
+0.1526538
+</td>
+<td style="text-align:right;">
+0.7821670
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.7647291
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.4733256
+</td>
+<td style="text-align:right;">
+0.5192783
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.0650610
+</td>
+<td style="text-align:right;">
+0.4981101
+</td>
+<td style="text-align:right;">
+0.4480343
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.3112994
+</td>
+<td style="text-align:right;">
+0.9430704
+</td>
+<td style="text-align:right;">
+0.5114592
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.8089534
+</td>
+<td style="text-align:right;">
+0.5734486
+</td>
+<td style="text-align:right;">
+0.3729606
+</td>
+<td style="text-align:right;">
+0.1678518
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.8313814
+</td>
+<td style="text-align:right;">
+0.2601181
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.3084450
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.5162933
+</td>
+<td style="text-align:right;">
+0.1427491
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.5244878
+</td>
+<td style="text-align:right;">
+0.0255376
+</td>
+<td style="text-align:right;">
+0.2098653
+</td>
+<td style="text-align:right;">
+0.2556247
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.5192926
+</td>
+<td style="text-align:right;">
+0.0472186
+</td>
+<td style="text-align:right;">
+0.7084006
+</td>
+<td style="text-align:right;">
+0.5745131
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.4243735
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.2532211
+</td>
+<td style="text-align:right;">
+0.5222322
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
 <div id="exercise-for-for-loops" class="section level3" number="19.6.1">
 <h3>
 <span class="header-section-number">19.6.1</span> Exercise for For Loops<a class="anchor" aria-label="anchor" href="#exercise-for-for-loops"><i class="fas fa-link"></i></a>
@@ -1340,40 +1511,11 @@ d
 <button class="btn btn-success"><i class="fa fa-save"></i> Download LPI data as csv</button>
 </a>
 <p>First we should import the data:</p>
-<div class="sourceCode" id="cb518"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">LPI</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"data/LPI_data_loops.csv"</span><span class="op">)</span></code></pre></div>
-<p>Here is an example of a graph we can make from the data looking at Griffon Vulture changes in numbers over time.</p>
 <div class="sourceCode" id="cb519"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">vultureITCR</span> <span class="op">&lt;-</span> <span class="va">LPI</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Common.Name</span> <span class="op">==</span> <span class="st">"Griffon vulture / Eurasian griffon"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Country.list</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Croatia"</span>, <span class="st">"Italy"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">vulture_scatter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">vultureITCR</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">abundance</span>, colour <span class="op">=</span> <span class="va">Country.list</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>  
-  <span class="co"># Changing point size</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="va">lm</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">Country.list</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="co"># Adding a linear model fit and colour-coding by country</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#EE7600"</span>, <span class="st">"#00868B"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>               
-  <span class="co"># Adding custom colours</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#EE7600"</span>, <span class="st">"#00868B"</span><span class="op">)</span>,               
-                        <span class="co"># Adding custom colours</span>
-                        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Croatia"</span>, <span class="st">"Italy"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>               
-  <span class="co"># Adding labels for the legend</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Griffon vulture abundance\n"</span><span class="op">)</span> <span class="op">+</span>                             
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"\nYear"</span><span class="op">)</span>  <span class="op">+</span>
-        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> 
-
-<span class="va">vulture_scatter</span></code></pre></div>
-<div class="inline-figure"><img src="20-writing-functions_files/figure-html/unnamed-chunk-62-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>We can use custom themes (like the one you made earlier) to quickly update figures</p>
+<code class="sourceCode R"><span class="va">LPI_UK</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"data/LPI_data_loops.csv"</span><span class="op">)</span></code></pre></div>
+<p>Let's take a look at using functions and loops to help us build figures.</p>
 <div class="sourceCode" id="cb520"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">vulture_scatter</span><span class="op">+</span><span class="fu">theme_custom</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="20-writing-functions_files/figure-html/unnamed-chunk-63-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>Now let's take a look at using functions and loops to help us build figures.</p>
-<div class="sourceCode" id="cb521"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">LPI_UK</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">LPI</span>, <span class="va">Country.list</span> <span class="op">==</span> <span class="st">"United Kingdom"</span><span class="op">)</span>
-
-<span class="co"># Pick 4 species and make scatterplots with a simple regression model fits that show how the population has varied through time</span>
+<code class="sourceCode R"><span class="co"># Pick 4 species and make scatterplots with a simple regression model fits that show how the population has varied through time</span>
 
 <span class="co"># Careful with the spelling of the names, it needs to match the names of the species in the LPI.UK dataframe</span>
 
@@ -1382,7 +1524,7 @@ d
 <span class="va">corn_bunting</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">LPI_UK</span>, <span class="va">Common.Name</span> <span class="op">==</span> <span class="st">"Corn bunting"</span><span class="op">)</span>
 <span class="va">meadow_pipit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">LPI_UK</span>, <span class="va">Common.Name</span> <span class="op">==</span> <span class="st">"Meadow pipit"</span><span class="op">)</span></code></pre></div>
 <p>So now we have four separate R objects holding data from four bird species, our standard approach might then be to make four figures looking at abundance over time.</p>
-<div class="sourceCode" id="cb522"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb521"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">house_sparrow_scatter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">house_sparrow</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span>, colour <span class="op">=</span> <span class="st">"#00868B"</span><span class="op">)</span> <span class="op">+</span>                                                
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="va">lm</span>, colour <span class="op">=</span> <span class="st">"#00868B"</span>, fill <span class="op">=</span> <span class="st">"#00868B"</span><span class="op">)</span> <span class="op">+</span>          
@@ -1407,7 +1549,7 @@ d
     <span class="fu">theme_custom</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Abundance\n"</span>, x <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"Meadow pipit"</span><span class="op">)</span></code></pre></div>
 <p>If we want to look at all four plots at once we can use the layout functions from the package <code>patchwork</code>.</p>
-<div class="sourceCode" id="cb523"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb522"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># put at the top of your script</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span>
 
@@ -1419,13 +1561,13 @@ d
   <span class="va">corn_bunting_scatter</span><span class="op">+</span>
   <span class="va">meadow_pipit_scatter</span><span class="op">+</span>
   <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html">plot_layout</a></span><span class="op">(</span>design<span class="op">=</span><span class="va">layout</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="20-writing-functions_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="inline-figure"><img src="20-writing-functions_files/figure-html/unnamed-chunk-65-1.png" width="100%" style="display: block; margin: auto;"></div>
 <p>This is ok, but arguably still requires a lot of code repetition. We have used the same lines of code four times to recreate four plots that are functionally the same. If we want to make any changes to the look of our plots we have to make four separate edits &amp; mistakes can easily creep in.</p>
 <p>If we want to apply a loop, then the easiest thing is to first make our objects into an R list:</p>
-<div class="sourceCode" id="cb524"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb523"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">Sp_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">house_sparrow</span>, <span class="va">great_tit</span>, <span class="va">corn_bunting</span>, <span class="va">meadow_pipit</span><span class="op">)</span></code></pre></div>
 <p>Then loop down the length of our list:</p>
-<div class="sourceCode" id="cb525"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb524"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">my_plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">Sp_list</span><span class="op">)</span><span class="op">)</span>
 
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">Sp_list</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>                                    
@@ -1444,19 +1586,27 @@ d
    <span class="co"># makes a list of all the plots generates</span>
   <span class="va">my_plots</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">plot</span> 
   
-  <span class="co"># prints each plot out as it is made</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span> 
+
+
 <span class="op">}</span></code></pre></div>
-<p><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;"><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-2.png" width="100%" style="display: block; margin: auto;"><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-3.png" width="100%" style="display: block; margin: auto;"><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-4.png" width="100%" style="display: block; margin: auto;"></p>
 <p>So now we have a new object <code>my_plots</code> which is a list containing the four plots. This loop allowed us to code the details of our figures once, then iterate across four different groups.</p>
-<div class="sourceCode" id="cb526"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb525"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html">wrap_plots</a></span><span class="op">(</span><span class="va">my_plots</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html">plot_layout</a></span><span class="op">(</span>design<span class="op">=</span><span class="va">layout</span><span class="op">)</span> </code></pre></div>
-<div class="inline-figure"><img src="20-writing-functions_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;"></div>
-<div class="sourceCode" id="cb527"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="20-writing-functions_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;"></div>
+<div class="sourceCode" id="cb526"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#wrap_plots function from patchwork can take a list of ggplots</span></code></pre></div>
 <p>What if you want to write a loop to save all four plots at once - can you modify the script to do this?</p>
-<div class="sourceCode" id="cb528"><pre class="downlit sourceCode r">
+<button id="displayTextunnamed-chunk-69" onclick="javascript:toggle('unnamed-chunk-69');">
+Show Solution
+</button>
+<div id="toggleTextunnamed-chunk-69" style="display: none">
+<div class="panel panel-default">
+<div class="panel-heading panel-heading1">
+Solution
+</div>
+<div class="panel-body">
+<div class="sourceCode" id="cb527"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">Sp_list</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>                                    
   <span class="co"># For every item along the length of Sp_list we want R to perform the following functions</span>
   <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">Sp_list</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>                               
@@ -1477,169 +1627,19 @@ d
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="va">plot</span>, file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"figure/"</span>, <span class="va">sp.name</span>, <span class="st">".png"</span>, sep<span class="op">=</span><span class="st">''</span><span class="op">)</span>, dpi<span class="op">=</span><span class="fl">900</span><span class="op">)</span> 
 <span class="op">}</span></code></pre></div>
 </div>
-<div id="iteration-in-r" class="section level3" number="19.6.2">
-<h3>
-<span class="header-section-number">19.6.2</span> Iteration in R<a class="anchor" aria-label="anchor" href="#iteration-in-r"><i class="fas fa-link"></i></a>
-</h3>
-<p>Loops are a fundamental part of programming in many languages - that's why they have been introduced as a concept with examples here. However in R, Loops are used much less often than in other languages. That is because R is a 'vector based language', something we often take for granted. But what does that mean?</p>
-<p>Here's an example - in the below written for R if we make a vector then apply a function to it, then it is applied to each element of the function, this is something we take for granted in R, but simply doesn't exist in languages like C++</p>
-<pre><code>x &lt;- c(2,4,6,8,10)
-
-x/2
-
-# [1] 1 2 3 4 5
-</code></pre>
-<p>Instead for C++ we would be required to write a loop, in order to explicitly request that the division is applied to each element of the vector</p>
-<pre><code>for(i in seq_along(x)){
-x[i] = x[i]/2
-}
-x
-
-# [1] 1 2 3 4 5
-</code></pre>
-<p>A lot of functions in R are already vectorised and you don't even have to think about this concept. When we want more control over how this vectorization is applied, we have used the function <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> It allows us to subset our data into hidden vectors, then command R to perform subsequent <code>dplyr</code> functions on each group separately. Because of the combined functionality of R's vectorization and dplyr's data tools you might find there is little need for loops. When we <em>do</em> wish to apply a function that isn't vectorize in the way we want - then tidyverse has an answer to this as well - purrr <span class="citation"><a href="references.html#ref-R-purrr" role="doc-biblioref">Henry &amp; Wickham</a> (<a href="references.html#ref-R-purrr" role="doc-biblioref">2020</a>)</span> and the <code>map()</code> function</p>
-</div>
-<div id="learn-to-purrr" class="section level3" number="19.6.3">
-<h3>
-<span class="header-section-number">19.6.3</span> Learn to purrr<a class="anchor" aria-label="anchor" href="#learn-to-purrr"><i class="fas fa-link"></i></a>
-</h3>
-<p>There are also a few other advantages to using <code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map()</a></code> - you can use it with pipes %&gt;%, it handles errors better than normal for loops, and the syntax is quite clean and simple!</p>
-<p><strong>Remember</strong> purrr is a very tidyverse focused method of iteration, so understanding for loops can be useful if you end up learning other programming languages in the future.</p>
-<p><strong>purrr</strong> is more focused on the function, and less obviously focused on the looping aspect, as you might be able to see below.</p>
-<p>The basic syntax is map(<code>.x</code> = SEQUENCE, <code>.f</code> = FUNCTION, OTHER ARGUMENTS). In a bit more detail:</p>
-<ul>
-<li><p><code>.x</code> = are the inputs upon which the .f function will be iteratively applied - e.g. a vector of jurisdiction names, columns in a data frame, or a list of data frames</p></li>
-<li><p><code>.f</code> = is the function to apply to each element of the .x input - it could be a function like print() that already exists, or a custom function that you define. The function is often written after a tilde ~ (details below).
-A few more notes on syntax:</p></li>
-<li><p>If the function needs no further arguments specified, it can be written with no parentheses and no tilde (e.g. <code>.f = mean</code>). To provide arguments that will be the same value for each iteration, provide them within <code>map()</code> but outside the <code>.f = argument</code>, such as the <code>na.rm = T</code> in <code>map(.x = my_list, .f = mean, na.rm=T)</code>.</p></li>
-<li><p>You can use <code>.x</code> (or simply <code>.</code>) within the <code>.f = function</code> as a placeholder for the <code>.x</code> value of that iteration</p></li>
-<li><p>Use tilde syntax (<code><a href="https://rdrr.io/r/base/tilde.html">~</a></code>) to have greater control over the function - write the function as normal with parentheses, such as: <code>map(.x = my_list, .f = ~mean(., na.rm = T))</code>. Use this syntax particularly if the value of an argument will change each iteration, or if it is the value <code>.x</code> itself.</p></li>
-</ul>
-<p><strong>The output of using<code>map()</code> is a list</strong> - a list is an object class like a vector but whose elements can be of different classes. So, a list produced by <code>map()</code> could contain many data frames, or many vectors, many single values, or even many lists! There are alternative versions of <code>map()</code> explained below that produce other types of outputs (e.g. <code>map_dfr()</code> to produce a data frame, <code>map_chr()</code> to produce character vectors, and <code>map_dbl()</code> to produce numeric vectors).</p>
-<p>Basic <code>map()</code> will <em>always</em> return a list of values</p>
-<ul>
-<li>
-<code>map_lgl()</code> returns a logical</li>
-<li>
-<code>map_int()</code> returns an integer vector</li>
-<li>
-<code>map_dbl()</code> returns a double vector</li>
-<li>
-<code>map_chr()</code> returns a character vector</li>
-<li>
-<code>map_df()</code> returns a data frame</li>
-</ul>
-<div class="sourceCode" id="cb531"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Apply n_distinct to all variables, returning a double (numeric) for each</span>
-<span class="va">map_dbl_result</span> <span class="op">&lt;-</span> <span class="va">LPI</span> <span class="op">%&gt;%</span> 
-  <span class="fu">map_dbl</span><span class="op">(</span><span class="va">n_distinct</span><span class="op">)</span>
-
-<span class="co"># Print out result</span>
-<span class="va">map_dbl_result</span>
-
-<span class="co"># Print out type of result</span>
-<span class="fu"><a href="https://rdrr.io/r/base/typeof.html">typeof</a></span><span class="op">(</span><span class="va">map_dbl_result</span><span class="op">)</span></code></pre></div>
-<pre><code>##         ...1        Class        Order  Common.Name Country.list       Region 
-##       182086           14          100         2947          357            9 
-##       system        biome        realm         year    abundance 
-##            4           33           16           45        30872 
-## [1] "double"</code></pre>
-<div class="sourceCode" id="cb533"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Apply n_distinct to all variables, returning a dataframe</span>
-<span class="va">map_df_result</span> <span class="op">&lt;-</span> <span class="va">LPI</span> <span class="op">%&gt;%</span> 
-  <span class="fu">map_df</span><span class="op">(</span><span class="va">n_distinct</span><span class="op">)</span>
-
-<span class="co"># Print out result</span>
-<span class="va">map_df_result</span>
-
-<span class="co"># Check if output is a data frame (tibble in this case)</span>
-<span class="fu">is_tibble</span><span class="op">(</span><span class="va">map_df_result</span><span class="op">)</span></code></pre></div>
-<div class="kable-table">
-<div class="inline-table"><table class="table table-sm">
-<thead><tr>
-<th style="text-align:right;">
-...1
-</th>
-<th style="text-align:right;">
-Class
-</th>
-<th style="text-align:right;">
-Order
-</th>
-<th style="text-align:right;">
-Common.Name
-</th>
-<th style="text-align:right;">
-Country.list
-</th>
-<th style="text-align:right;">
-Region
-</th>
-<th style="text-align:right;">
-system
-</th>
-<th style="text-align:right;">
-biome
-</th>
-<th style="text-align:right;">
-realm
-</th>
-<th style="text-align:right;">
-year
-</th>
-<th style="text-align:right;">
-abundance
-</th>
-</tr></thead>
-<tbody><tr>
-<td style="text-align:right;">
-182086
-</td>
-<td style="text-align:right;">
-14
-</td>
-<td style="text-align:right;">
-100
-</td>
-<td style="text-align:right;">
-2947
-</td>
-<td style="text-align:right;">
-357
-</td>
-<td style="text-align:right;">
-9
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-33
-</td>
-<td style="text-align:right;">
-16
-</td>
-<td style="text-align:right;">
-45
-</td>
-<td style="text-align:right;">
-30872
-</td>
-</tr></tbody>
-</table></div>
-</div>
-<pre><code>## [1] TRUE</code></pre>
 </div>
 </div>
-<div id="reading-and-writing-lots-of-files" class="section level2" number="19.7">
+</div>
+</div>
+<div id="automating-analyses-with-map" class="section level2" number="19.7">
 <h2>
-<span class="header-section-number">19.7</span> Reading and writing lots of files<a class="anchor" aria-label="anchor" href="#reading-and-writing-lots-of-files"><i class="fas fa-link"></i></a>
+<span class="header-section-number">19.7</span> Automating analyses with <code>map</code><a class="anchor" aria-label="anchor" href="#automating-analyses-with-map"><i class="fas fa-link"></i></a>
 </h2>
-<div id="writing" class="section level3" number="19.7.1">
+<div id="writing-a-dataframe-into-multiple-csv-files" class="section level3" number="19.7.1">
 <h3>
-<span class="header-section-number">19.7.1</span> Writing<a class="anchor" aria-label="anchor" href="#writing"><i class="fas fa-link"></i></a>
+<span class="header-section-number">19.7.1</span> Writing a dataframe into multiple csv files<a class="anchor" aria-label="anchor" href="#writing-a-dataframe-into-multiple-csv-files"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb535"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb528"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">LPI_list</span> <span class="op">&lt;-</span> <span class="va">LPI</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_split.html">group_split</a></span><span class="op">(</span><span class="va">Class</span><span class="op">)</span></code></pre></div>
 <p>I’ll also use <code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map()</a></code> to take the character values from the Class column itself for assigning names to the list. <code>map()</code> transforms an input by applying a function to each element of the input, and then returns a vector the same length as the input. In this immediate example, the input is the list_of_dfs and we apply the function <code><a href="https://dplyr.tidyverse.org/reference/pull.html">dplyr::pull()</a></code> to extract the Class variable from each data frame. We then repeat this approach to convert Class into character type with <code><a href="https://rdrr.io/r/base/character.html">as.character()</a></code> and take out a single value with <code><a href="https://rdrr.io/r/base/unique.html">unique()</a></code>:</p>
@@ -1653,19 +1653,19 @@ abundance
 <ol style="list-style-type: decimal">
 <li><p>Define a function that tells R what the names for each CSV file should be, which I’ve called output_csv() below. The data argument will take in a data frame whilst the names argument will take in a character string that will form part of the file name for the individual CSV file.</p></li>
 <li><p>Create a named list where the names match the arguments of the function you’ve just defined (data and names), and should contain the objects that you would like to pass through to the function for the respective arguments. In this case, list_of_dfs will provide the three data frames, and names(list_of_dfs) will provide the names of those three data frames. This is necessary for running pmap(), which in my view is basically a super-powered version of map() that lets you iterate over multiple inputs simultaneously.</p></li>
-<li><p><code>pmap()</code> will then iterate through the two sets of inputs through output_csv() (the inputs are used as arguments), which then writes the three CSV files with the file names you want. For the “writing” function, you could either use write_csv() from readr (part of tidyverse) or fwrite() from data.table, depending on your workflow / style.</p></li>
+<li><p><code>map()</code> will then iterate through the two sets of inputs through output_csv() (the inputs are used as arguments), which then writes the three CSV files with the file names you want. For the “writing” function, you could either use write_csv() from readr (part of tidyverse) or fwrite() from data.table, depending on your workflow / style.</p></li>
 </ol>
-<div class="sourceCode" id="cb537"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb530"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">LPI_list</span> <span class="op">%&gt;%</span> 
   <span class="fu">map</span><span class="op">(</span><span class="op">~</span><span class="fu">write_csv</span><span class="op">(</span><span class="va">.x</span>, 
   <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"data/"</span>, <span class="va">.x</span><span class="op">$</span><span class="va">Class</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">".csv"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="reading" class="section level3" number="19.7.2">
+<div id="reading-multiple-csv-files-into-one-object" class="section level3" number="19.7.2">
 <h3>
-<span class="header-section-number">19.7.2</span> Reading<a class="anchor" aria-label="anchor" href="#reading"><i class="fas fa-link"></i></a>
+<span class="header-section-number">19.7.2</span> Reading multiple csv files into one object<a class="anchor" aria-label="anchor" href="#reading-multiple-csv-files-into-one-object"><i class="fas fa-link"></i></a>
 </h3>
 <p>The method for reading CSV files into a directory is slightly different, as you’ll need to find a way to identify or create a character vector of names of all the files that you want to load into R. To do this, we’ll use <code><a href="https://rdrr.io/r/base/list.files.html">list.files()</a></code>, which produces a character vector of the names of files or directories in the named directory:</p>
-<div class="sourceCode" id="cb538"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb531"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data_path</span> <span class="op">&lt;-</span> <span class="st">"data/"</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">data_path</span>, 
@@ -1675,14 +1675,14 @@ abundance
  [9] "class-Mammalia.csv"           "class-Myxini.csv"             "class-Perciformes.csv"        "class-Reptilia.csv"          
 [13] "class-Sarcopterygii.csv"      "class-Testudinidae.csv"
 </code></pre>
-<p>The code below takes that list of files, pipes it to a <code>map_df()</code> function that runs read_csv on each file, then outputs everything toa dataframe</p>
-<div class="sourceCode" id="cb540"><pre class="downlit sourceCode r">
+<p>The code below takes that list of files, pipes it to a <code>map_df()</code> function that runs read_csv on each file, then outputs everything to a 'nested' dataframe.</p>
+<div class="sourceCode" id="cb533"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">files</span> <span class="op">%&gt;%</span>
     <span class="fu">map</span><span class="op">(</span><span class="op">~</span><span class="fu">read_csv</span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>    <span class="co"># read in all the files individually, using</span>
     <span class="co"># the function read_csv() from the readr package</span>
     <span class="fu"><a href="https://wilkelab.org/ggridges/reference/reduce.html">reduce</a></span><span class="op">(</span><span class="va">rbind</span><span class="op">)</span>        <span class="co"># reduce with rbind into one dataframe</span>
 <span class="va">data</span></code></pre></div>
-<div class="sourceCode" id="cb541"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb534"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Keep info on where data came from</span>
 
 <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="va">files</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -1691,693 +1691,14 @@ abundance
                <span class="op">~</span> <span class="fu">read_csv</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">data_path</span>, <span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">data</span></code></pre></div>
-<div class="sourceCode" id="cb542"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb535"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">unnest</span><span class="op">(</span><span class="va">data</span><span class="op">)</span></code></pre></div>
-<div class="kable-table">
-<div class="inline-table"><table class="table table-sm">
-<thead><tr>
-<th style="text-align:right;">
-...1
-</th>
-<th style="text-align:left;">
-Class
-</th>
-<th style="text-align:left;">
-Order
-</th>
-<th style="text-align:left;">
-Common.Name
-</th>
-<th style="text-align:left;">
-Country.list
-</th>
-<th style="text-align:left;">
-Region
-</th>
-<th style="text-align:left;">
-system
-</th>
-<th style="text-align:left;">
-biome
-</th>
-<th style="text-align:left;">
-realm
-</th>
-<th style="text-align:right;">
-year
-</th>
-<th style="text-align:right;">
-abundance
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-1512
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1970
-</td>
-<td style="text-align:right;">
-45
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4225
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1971
-</td>
-<td style="text-align:right;">
-45
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-6838
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1972
-</td>
-<td style="text-align:right;">
-43
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-9482
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1973
-</td>
-<td style="text-align:right;">
-42
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-12354
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1974
-</td>
-<td style="text-align:right;">
-40
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-15408
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1975
-</td>
-<td style="text-align:right;">
-35
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-18749
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1976
-</td>
-<td style="text-align:right;">
-38
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-22135
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1977
-</td>
-<td style="text-align:right;">
-40
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-25626
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1978
-</td>
-<td style="text-align:right;">
-30
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-29186
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1979
-</td>
-<td style="text-align:right;">
-35
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-89306
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1992
-</td>
-<td style="text-align:right;">
-40
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-94914
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1993
-</td>
-<td style="text-align:right;">
-47
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-100589
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1994
-</td>
-<td style="text-align:right;">
-45
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-106398
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1995
-</td>
-<td style="text-align:right;">
-31
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-112343
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1996
-</td>
-<td style="text-align:right;">
-29
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-118486
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1997
-</td>
-<td style="text-align:right;">
-22
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-124297
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1998
-</td>
-<td style="text-align:right;">
-18
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-129806
-</td>
-<td style="text-align:left;">
-Aves
-</td>
-<td style="text-align:left;">
-Passeriformes
-</td>
-<td style="text-align:left;">
-Meadow pipit
-</td>
-<td style="text-align:left;">
-United Kingdom
-</td>
-<td style="text-align:left;">
-Europe
-</td>
-<td style="text-align:left;">
-Terrestrial
-</td>
-<td style="text-align:left;">
-Temperate broadleaf and mixed forests
-</td>
-<td style="text-align:left;">
-Palearctic
-</td>
-<td style="text-align:right;">
-1999
-</td>
-<td style="text-align:right;">
-21
-</td>
-</tr>
-</tbody>
-</table></div>
 </div>
-<p>I think <code>map_df</code> is extremely useful because you can feed it’s output directly into a ggplot2 call:</p>
-<div class="sourceCode" id="cb543"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">LPI</span> <span class="op">%&gt;%</span> 
-  <span class="fu">map_df</span><span class="op">(</span><span class="va">n_distinct</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="co"># Convert to longer format</span>
-  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html">everything</a></span><span class="op">(</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"variable"</span>, values_to <span class="op">=</span> <span class="st">"count"</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># Start plotting</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">variable</span>, y <span class="op">=</span> <span class="va">count</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="inline-figure"><img src="20-writing-functions_files/figure-html/unnamed-chunk-79-1.png" width="100%" style="display: block; margin: auto;"></div>
-<p>Now you have a simple grasp of <code>purrr</code> you should see that we have a list containing species objects, and an anonymous function ~ggplot on the right. We can use this to quickly make four plots, just like we did with our for loops.</p>
-<p>the <code>map()</code> function takes a list or vector as the first argument, and a function (prefixed by ~) as the second argument, it will then apply the function to each element of the list or vector. It will then return the output as new list. Simple!</p>
-<div class="sourceCode" id="cb544"><pre class="downlit sourceCode r">
+<div id="plotting-with-map" class="section level3" number="19.7.3">
+<h3>
+<span class="header-section-number">19.7.3</span> Plotting with <code>map</code><a class="anchor" aria-label="anchor" href="#plotting-with-map"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb536"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">LPI_UK</span> <span class="op">%&gt;%</span> 
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Common.Name</span> <span class="op">==</span> <span class="st">"House sparrow"</span> <span class="op">|</span> 
                <span class="va">Common.Name</span> <span class="op">==</span> <span class="st">"Great tit"</span> <span class="op">|</span> 
@@ -2388,19 +1709,8 @@ Palearctic
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>plots <span class="op">=</span> <span class="fu">map</span><span class="op">(</span><span class="va">data</span>, <span class="op">~</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">.</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>              
             <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span>, colour <span class="op">=</span> <span class="st">"#00868B"</span><span class="op">)</span> <span class="op">+</span>                                                
             <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="va">lm</span>, colour <span class="op">=</span> <span class="st">"#00868B"</span>, fill <span class="op">=</span> <span class="st">"#00868B"</span><span class="op">)</span> <span class="op">+</span>          
-            <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Abundance\n"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-
-<span class="va">my_plots_2</span> <span class="op">&lt;-</span> 
-  <span class="fu">map</span><span class="op">(</span><span class="va">Sp_list</span>, <span class="op">~</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">.</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span> <span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>              
-                      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span>, colour <span class="op">=</span> <span class="st">"#00868B"</span><span class="op">)</span> <span class="op">+</span>                                                
-                      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="va">lm</span>, colour <span class="op">=</span> <span class="st">"#00868B"</span>, fill <span class="op">=</span> <span class="st">"#00868B"</span><span class="op">)</span> <span class="op">+</span>          
-                      <span class="fu">theme_custom</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-                      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Abundance\n"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span> 
-
-
-<span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html">wrap_plots</a></span><span class="op">(</span><span class="va">my_plots_2</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html">plot_layout</a></span><span class="op">(</span>design<span class="op">=</span><span class="va">layout</span><span class="op">)</span></code></pre></div>
-<img src="20-writing-functions_files/figure-html/unnamed-chunk-80-1.png" width="100%" style="display: block; margin: auto;"><div class="kable-table">
+            <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Abundance\n"</span>, x <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="kable-table">
 <div class="inline-table"><table class="table table-sm">
 <thead><tr>
 <th style="text-align:left;">
@@ -2422,7 +1732,7 @@ Meadow pipit
 1512 , 4225 , 6838 , 9482 , 12354 , 15408 , 18749 , 22135 , 25626 , 29186 , 89306 , 94914 , 100589 , 106398 , 112343 , 118486 , 124297 , 129806 , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , 1970 , 1971 , 1972 , 1973 , 1974 , 1975 , 1976 , 1977 , 1978 , 1979 , 1992 , 1993 , 1994 , 1995 , 1996 , 1997 , 1998 , 1999 , 45 , 45 , 43 , 42 , 40 , 35 , 38 , 40 , 30 , 35 , 40 , 47 , 45 , 31 , 29 , 22 , 18 , 21
 </td>
 <td style="text-align:left;">
-1512, 4225, 6838, 9482, 12354, 15408, 18749, 22135, 25626, 29186, 89306, 94914, 100589, 106398, 112343, 118486, 124297, 129806, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 45, 45, 43, 42, 40, 35, 38, 40, 30, 35, 40, 47, 45, 31, 29, 22, 18, 21, &lt;environment: 0x00000000180b5810&gt;, &lt;environment: 0x0000000017e95c00&gt;, &lt;environment: 0x0000000017dcc1f0&gt;, ~year, ~abundance, &lt;environment: 0x00000000181998a0&gt;, &lt;environment: 0x0000000018197248&gt;, &lt;environment: 0x00000000181abd38&gt;, Abundance
+1512, 4225, 6838, 9482, 12354, 15408, 18749, 22135, 25626, 29186, 89306, 94914, 100589, 106398, 112343, 118486, 124297, 129806, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 45, 45, 43, 42, 40, 35, 38, 40, 30, 35, 40, 47, 45, 31, 29, 22, 18, 21, &lt;environment: 0x0000000018643280&gt;, &lt;environment: 0x000000001855f6e0&gt;, &lt;environment: 0x00000000184fb320&gt;, ~year, ~abundance, &lt;environment: 0x00000000186be328&gt;, &lt;environment: 0x00000000186bfb38&gt;, &lt;environment: 0x00000000186d8f60&gt;, Abundance
 ,
 </td>
 </tr>
@@ -2434,7 +1744,7 @@ Great tit
 1645 , 1655 , 4345 , 4351 , 6956 , 6963 , 9599 , 9606 , 12468 , 12476 , 15523 , 15531 , 18861 , 18867 , 22243 , 22250 , 25729 , 25735 , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , 1970 , 1970 , 1971 , 1971 , 1972 , 1972 , 1973 , 1973 , 1974 , 1974 , 1975 , 1975 , 1976 , 1976 , 1977 , 1977 , 1978 , 1978 , 92 , 99 , 97 , 120 , 107 , 132 , 101 , 138 , 100 , 131 , 103 , 132 , 105 , 121 , 115 , 133 , 121 , 128
 </td>
 <td style="text-align:left;">
-1645, 1655, 4345, 4351, 6956, 6963, 9599, 9606, 12468, 12476, 15523, 15531, 18861, 18867, 22243, 22250, 25729, 25735, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1970, 1971, 1971, 1972, 1972, 1973, 1973, 1974, 1974, 1975, 1975, 1976, 1976, 1977, 1977, 1978, 1978, 92, 99, 97, 120, 107, 132, 101, 138, 100, 131, 103, 132, 105, 121, 115, 133, 121, 128, &lt;environment: 0x000000001850e860&gt;, &lt;environment: 0x0000000018446e08&gt;, &lt;environment: 0x000000001840e3a8&gt;, ~year, ~abundance, &lt;environment: 0x00000000185aa988&gt;, &lt;environment: 0x00000000185a6330&gt;, &lt;environment: 0x000000001860a8b8&gt;, Abundance
+1645, 1655, 4345, 4351, 6956, 6963, 9599, 9606, 12468, 12476, 15523, 15531, 18861, 18867, 22243, 22250, 25729, 25735, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1970, 1971, 1971, 1972, 1972, 1973, 1973, 1974, 1974, 1975, 1975, 1976, 1976, 1977, 1977, 1978, 1978, 92, 99, 97, 120, 107, 132, 101, 138, 100, 131, 103, 132, 105, 121, 115, 133, 121, 128, &lt;environment: 0x000000001899bf18&gt;, &lt;environment: 0x0000000018919348&gt;, &lt;environment: 0x00000000188e5f60&gt;, ~year, ~abundance, &lt;environment: 0x0000000018a26ae0&gt;, &lt;environment: 0x0000000018a281a0&gt;, &lt;environment: 0x0000000018a3fb80&gt;, Abundance
 ,
 </td>
 </tr>
@@ -2446,7 +1756,7 @@ Corn bunting
 2060 , 4579 , 7179 , 9831 , 12693 , 15760 , 19076 , 22448 , 25913 , 29473 , 33150 , 37000 , 40731 , 44566 , 48638 , 52845 , 57245 , 61785 , 66611 , 71335 , 76392 , 81635 , 86930 , 92755 , 98457 , 104215 , 110044 , 115898 , 122041 , 127800 , 133524 , 139120 , 144291 , 149396 , 154079 , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , 1970 , 1971 , 1972 , 1973 , 1974 , 1975 , 1976 , 1977 , 1978 , 1979 , 1980 , 1981 , 1982 , 1983 , 1984 , 1985 , 1986 , 1987 , 1988 , 1989 , 1990 , 1991 , 1992 , 1993 , 1994 , 1995 , 1996 , 1997 , 1998 , 1999 , 2000 , 2001 , 2002 , 2003 , 2004 , 887 , 946 , 970 , 987 , 964 , 911 , 852 , 793 , 739 , 692 , 651 , 592 , 527 , 450 , 379 , 314 , 267 , 238 , 226 , 214 , 208 , 202 , 190 , 185 , 173 , 161 , 149 , 143 , 137 , 131 , 125 , 120 , 120 , 125 , 125
 </td>
 <td style="text-align:left;">
-2060, 4579, 7179, 9831, 12693, 15760, 19076, 22448, 25913, 29473, 33150, 37000, 40731, 44566, 48638, 52845, 57245, 61785, 66611, 71335, 76392, 81635, 86930, 92755, 98457, 104215, 110044, 115898, 122041, 127800, 133524, 139120, 144291, 149396, 154079, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 887, 946, 970, 987, 964, 911, 852, 793, 739, 692, 651, 592, 527, 450, 379, 314, 267, 238, 226, 214, 208, 202, 190, 185, 173, 161, 149, 143, 137, 131, 125, 120, 120, 125, 125, &lt;environment: 0x00000000187bec70&gt;, &lt;environment: 0x0000000018674470&gt;, &lt;environment: 0x0000000018634c90&gt;, ~year, ~abundance, &lt;environment: 0x000000001888e0a8&gt;, &lt;environment: 0x000000001888f9d0&gt;, &lt;environment: 0x00000000188ab778&gt;, Abundance
+2060, 4579, 7179, 9831, 12693, 15760, 19076, 22448, 25913, 29473, 33150, 37000, 40731, 44566, 48638, 52845, 57245, 61785, 66611, 71335, 76392, 81635, 86930, 92755, 98457, 104215, 110044, 115898, 122041, 127800, 133524, 139120, 144291, 149396, 154079, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 887, 946, 970, 987, 964, 911, 852, 793, 739, 692, 651, 592, 527, 450, 379, 314, 267, 238, 226, 214, 208, 202, 190, 185, 173, 161, 149, 143, 137, 131, 125, 120, 120, 125, 125, &lt;environment: 0x00000000193c7628&gt;, &lt;environment: 0x0000000018a94ee0&gt;, &lt;environment: 0x0000000018a4b448&gt;, ~year, ~abundance, &lt;environment: 0x00000000195a8eb8&gt;, &lt;environment: 0x0000000019579098&gt;, &lt;environment: 0x00000000195d5df8&gt;, Abundance
 ,
 </td>
 </tr>
@@ -2458,7 +1768,7 @@ House sparrow
 20054 , 20055 , 23477 , 23478 , 26990 , 26991 , 30618 , 30619 , 34404 , 34405 , 38229 , 38230 , 42026 , 42027 , 45922 , 45923 , 50068 , 50069 , 54407 , 54408 , 58888 , 58889 , 63689 , 63690 , 68378 , 68379 , 73174 , 73175 , 78422 , 78423 , 83666 , 83667 , 89245 , 89246 , 94852 , 94853 , 100528 , 100529 , 106368 , 106369 , 112313 , 112314 , 118454 , 118455 , 124271 , 124272 , 129803 , 129804 , 135615 , 135616 , 141082 , 141083 , 146137 , 146138 , 151145 , 151146 , 155752 , 155753 , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Aves , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , Passeriformes , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , United Kingdom , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Europe , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Terrestrial , Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , Palearctic , 1976 , 1976 , 1977 , 1977 , 1978 , 1978 , 1979 , 1979 , 1980 , 1980 , 1981 , 1981 , 1982 , 1982 , 1983 , 1983 , 1984 , 1984 , 1985 , 1985 , 1986 , 1986 , 1987 , 1987 , 1988 , 1988 , 1989 , 1989 , 1990 , 1990 , 1991 , 1991 , 1992 , 1992 , 1993 , 1993 , 1994 , 1994 , 1995 , 1995 , 1996 , 1996 , 1997 , 1997 , 1998 , 1998 , 1999 , 1999 , 2000 , 2000 , 2001 , 2001 , 2002 , 2002 , 2003 , 2003 , 2004 , 2004 , 328 , 328 , 318 , 318 , 306 , 306 , 291 , 291 , 264 , 264 , 234 , 234 , 210 , 210 , 192 , 192 , 188 , 188 , 185 , 185 , 183 , 183 , 178 , 178 , 168 , 168 , 161 , 161 , 151 , 151 , 141 , 141 , 131 , 131 , 126 , 126 , 121 , 121 , 119 , 119 , 119 , 119 , 114 , 114 , 111 , 111 , 109 , 109 , 106 , 106 , 106 , 106 , 106 , 106 , 106 , 106 , 109 , 109
 </td>
 <td style="text-align:left;">
-20054, 20055, 23477, 23478, 26990, 26991, 30618, 30619, 34404, 34405, 38229, 38230, 42026, 42027, 45922, 45923, 50068, 50069, 54407, 54408, 58888, 58889, 63689, 63690, 68378, 68379, 73174, 73175, 78422, 78423, 83666, 83667, 89245, 89246, 94852, 94853, 100528, 100529, 106368, 106369, 112313, 112314, 118454, 118455, 124271, 124272, 129803, 129804, 135615, 135616, 141082, 141083, 146137, 146138, 151145, 151146, 155752, 155753, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1976, 1976, 1977, 1977, 1978, 1978, 1979, 1979, 1980, 1980, 1981, 1981, 1982, 1982, 1983, 1983, 1984, 1984, 1985, 1985, 1986, 1986, 1987, 1987, 1988, 1988, 1989, 1989, 1990, 1990, 1991, 1991, 1992, 1992, 1993, 1993, 1994, 1994, 1995, 1995, 1996, 1996, 1997, 1997, 1998, 1998, 1999, 1999, 2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 328, 328, 318, 318, 306, 306, 291, 291, 264, 264, 234, 234, 210, 210, 192, 192, 188, 188, 185, 185, 183, 183, 178, 178, 168, 168, 161, 161, 151, 151, 141, 141, 131, 131, 126, 126, 121, 121, 119, 119, 119, 119, 114, 114, 111, 111, 109, 109, 106, 106, 106, 106, 106, 106, 106, 106, 109, 109, &lt;environment: 0x000000001837c580&gt;, &lt;environment: 0x0000000018310c38&gt;, &lt;environment: 0x00000000181bb980&gt;, ~year, ~abundance, &lt;environment: 0x00000000183ec8e8&gt;, &lt;environment: 0x00000000183ea370&gt;, &lt;environment: 0x00000000183fbdc0&gt;, Abundance
+20054, 20055, 23477, 23478, 26990, 26991, 30618, 30619, 34404, 34405, 38229, 38230, 42026, 42027, 45922, 45923, 50068, 50069, 54407, 54408, 58888, 58889, 63689, 63690, 68378, 68379, 73174, 73175, 78422, 78423, 83666, 83667, 89245, 89246, 94852, 94853, 100528, 100529, 106368, 106369, 112313, 112314, 118454, 118455, 124271, 124272, 129803, 129804, 135615, 135616, 141082, 141083, 146137, 146138, 151145, 151146, 155752, 155753, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Aves, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, Passeriformes, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, United Kingdom, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Europe, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Terrestrial, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Temperate broadleaf and mixed forests, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, Palearctic, 1976, 1976, 1977, 1977, 1978, 1978, 1979, 1979, 1980, 1980, 1981, 1981, 1982, 1982, 1983, 1983, 1984, 1984, 1985, 1985, 1986, 1986, 1987, 1987, 1988, 1988, 1989, 1989, 1990, 1990, 1991, 1991, 1992, 1992, 1993, 1993, 1994, 1994, 1995, 1995, 1996, 1996, 1997, 1997, 1998, 1998, 1999, 1999, 2000, 2000, 2001, 2001, 2002, 2002, 2003, 2003, 2004, 2004, 328, 328, 318, 318, 306, 306, 291, 291, 264, 264, 234, 234, 210, 210, 192, 192, 188, 188, 185, 185, 183, 183, 178, 178, 168, 168, 161, 161, 151, 151, 141, 141, 131, 131, 126, 126, 121, 121, 119, 119, 119, 119, 114, 114, 111, 111, 109, 109, 106, 106, 106, 106, 106, 106, 106, 106, 109, 109, &lt;environment: 0x0000000018803880&gt;, &lt;environment: 0x000000001872fbd8&gt;, &lt;environment: 0x00000000186e3980&gt;, ~year, ~abundance, &lt;environment: 0x000000001889b578&gt;, &lt;environment: 0x00000000188990a8&gt;, &lt;environment: 0x00000000188cbcf8&gt;, Abundance
 ,
 </td>
 </tr>
@@ -2472,7 +1782,7 @@ House sparrow
 <span class="header-section-number">19.8</span> Activity 4: Test yourself<a class="anchor" aria-label="anchor" href="#activity-4-test-yourself"><i class="fas fa-link"></i></a>
 </h2>
 <p><strong>Question 1.</strong> Predict the output of the following when executed in R:</p>
-<div class="sourceCode" id="cb545"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb537"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">foo</span><span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">d</span>,<span class="va">n</span>,<span class="va">max</span><span class="op">)</span><span class="op">{</span>
    <span class="va">nums</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from<span class="op">=</span><span class="fl">1</span>, by<span class="op">=</span><span class="va">d</span>, length.out<span class="op">=</span><span class="va">n</span><span class="op">)</span>
    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">nums</span><span class="op">[</span><span class="va">nums</span> <span class="op">&lt;=</span> <span class="va">max</span><span class="op">]</span><span class="op">)</span>
@@ -2483,7 +1793,7 @@ House sparrow
 <option value="answer">1, 5, 9</option>
 <option value="">4, 8, 12</option></select></p>
 <p><strong>Question 2.</strong> Predict the output of the following when executed in R:</p>
-<div class="sourceCode" id="cb546"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb538"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fum</span><span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">a</span>,<span class="va">b</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">a</span> <span class="op">=</span> <span class="va">a</span><span class="op">[</span><span class="va">a</span><span class="op">&lt;</span><span class="va">b</span><span class="op">]</span>
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span>
@@ -2495,46 +1805,46 @@ House sparrow
 <option value="">3, 4, 5, 6, 7</option>
 <option value="">3, 4</option></select></p>
 <p><strong>Question 3.</strong> Write a function that adds two numbers and divides the results by 2.</p>
-<button id="displayTextunnamed-chunk-83" onclick="javascript:toggle('unnamed-chunk-83');">
+<button id="displayTextunnamed-chunk-79" onclick="javascript:toggle('unnamed-chunk-79');">
 Show Solution
 </button>
-<div id="toggleTextunnamed-chunk-83" style="display: none">
+<div id="toggleTextunnamed-chunk-79" style="display: none">
 <div class="panel panel-default">
 <div class="panel-heading panel-heading1">
 Solution
 </div>
 <div class="panel-body">
-<div class="sourceCode" id="cb547"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb539"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">addtwo</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">num1</span>, <span class="va">num2</span><span class="op">)</span><span class="op">{</span>
 <span class="op">(</span><span class="va">num1</span> <span class="op">+</span> <span class="va">num2</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>
 <span class="op">}</span></code></pre></div>
 </div>
 </div>
 </div>
-<p><strong>Question 4.</strong> Recode values of a datase. tFor example, if you have a survey of age data, you may want to convert any crazy values (like anything below 0 or above 100) to NA. Write a function called recode.integer() with 3 arguments: x, lb, and ub. We’ll assume that x is a numeric vector. The function should look at the values of x, convert any values below lb and above ub to NA, and then return the resulting vector. Here is the function in action:</p>
+<p><strong>Question 4.</strong> Recode values of a datase. For example, if you have a survey of age data, you may want to convert any crazy values (like anything below 0 or above 100) to NA. Write a function called recode.integer() with 3 arguments: x, lb, and ub. We’ll assume that x is a numeric vector. The function should look at the values of x, convert any values below lb and above ub to NA, and then return the resulting vector. Here is the function in action:</p>
 <p>Some hints: there are multiple ways to solve this.</p>
-<div class="sourceCode" id="cb548"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb540"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vector</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span><span class="op">:</span><span class="fl">30</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb549"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb541"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">recode.integer</span><span class="op">(</span>x <span class="op">=</span> <span class="va">vector</span>,
                lb <span class="op">=</span> <span class="fl">0</span>,
                ub <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
-<button id="displayTextunnamed-chunk-86" onclick="javascript:toggle('unnamed-chunk-86');">
+<button id="displayTextunnamed-chunk-82" onclick="javascript:toggle('unnamed-chunk-82');">
 Show Solution
 </button>
-<div id="toggleTextunnamed-chunk-86" style="display: none">
+<div id="toggleTextunnamed-chunk-82" style="display: none">
 <div class="panel panel-default">
 <div class="panel-heading panel-heading1">
 Solution
 </div>
 <div class="panel-body">
-<div class="sourceCode" id="cb550"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb542"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">recode.integer</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">lb</span>, <span class="va">ub</span><span class="op">)</span><span class="op">{</span>
   <span class="va">x</span><span class="op">[</span><span class="va">x</span><span class="op">&lt;</span><span class="va">lb</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
   <span class="va">x</span><span class="op">[</span><span class="va">x</span><span class="op">&gt;</span><span class="va">ub</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
   <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<div class="sourceCode" id="cb551"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb543"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">recode.integer</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">lb</span>, <span class="va">ub</span><span class="op">)</span><span class="op">{</span>
     <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
       <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/replace.html">replace</a></span><span class="op">(</span><span class="va">value</span>, <span class="va">value</span><span class="op">&lt;</span><span class="va">lb</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -2565,7 +1875,6 @@ Solution
 <ul>
 <li><p><a href="https://www.rstudio.com/resources/cheatsheets/">RStudio education cheat sheet for purr</a></p></li>
 <li><p><a href="https://r4ds.had.co.nz/program-intro.html">R4DS - intro to programming</a></p></li>
-<li><p><a href="https://ourcodingclub.github.io/tutorials/funandloops/#function">Coding club</a></p></li>
 <li><p><a href="https://epirhandbook.com/en/iteration-loops-and-lists.html">EpiR handbook</a></p></li>
 </ul>
 </div>
@@ -2602,16 +1911,13 @@ Solution
 <li><a class="nav-link" href="#apply"><span class="header-section-number">19.4</span> apply</a></li>
 <li><a class="nav-link" href="#map"><span class="header-section-number">19.5</span> map</a></li>
 <li>
-<a class="nav-link" href="#anonymous-functions-1"><span class="header-section-number">19.6</span> Anonymous functions</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#exercise-for-for-loops"><span class="header-section-number">19.6.1</span> Exercise for For Loops</a></li>
-<li><a class="nav-link" href="#iteration-in-r"><span class="header-section-number">19.6.2</span> Iteration in R</a></li>
-<li><a class="nav-link" href="#learn-to-purrr"><span class="header-section-number">19.6.3</span> Learn to purrr</a></li>
-</ul>
+<a class="nav-link" href="#anonymous-functions-1"><span class="header-section-number">19.6</span> Anonymous functions</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#exercise-for-for-loops"><span class="header-section-number">19.6.1</span> Exercise for For Loops</a></li></ul>
 </li>
 <li>
-<a class="nav-link" href="#reading-and-writing-lots-of-files"><span class="header-section-number">19.7</span> Reading and writing lots of files</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#writing"><span class="header-section-number">19.7.1</span> Writing</a></li>
-<li><a class="nav-link" href="#reading"><span class="header-section-number">19.7.2</span> Reading</a></li>
+<a class="nav-link" href="#automating-analyses-with-map"><span class="header-section-number">19.7</span> Automating analyses with map</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#writing-a-dataframe-into-multiple-csv-files"><span class="header-section-number">19.7.1</span> Writing a dataframe into multiple csv files</a></li>
+<li><a class="nav-link" href="#reading-multiple-csv-files-into-one-object"><span class="header-section-number">19.7.2</span> Reading multiple csv files into one object</a></li>
+<li><a class="nav-link" href="#plotting-with-map"><span class="header-section-number">19.7.3</span> Plotting with map</a></li>
 </ul>
 </li>
 <li><a class="nav-link" href="#activity-4-test-yourself"><span class="header-section-number">19.8</span> Activity 4: Test yourself</a></li>
@@ -2815,7 +2121,7 @@ $( document ).ready(function() {
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Intro to R</strong>: Introduction to statistics in R for biologists and ecologists" was written by Philip T. Leftwich. It was last built on 2022-09-20.</p>
+    <p>"<strong>Intro to R</strong>: Introduction to statistics in R for biologists and ecologists" was written by Philip T. Leftwich. It was last built on 2022-09-21.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
