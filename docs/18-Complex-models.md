@@ -18,7 +18,7 @@ The flies used were an outbred stock, sexual activity was manipulated by supplyi
 
 
 ```{=html}
-<a href="https://raw.githubusercontent.com/UEABIO/data-sci-v1/main/book/files/fruitfly.csv">
+<a href="https://raw.githubusercontent.com/Philip-Leftwich/physalia-stats-intro/main/book/files/fruitfly.csv">
 <button class="btn btn-success"><i class="fa fa-save"></i> Download Fruitfly data as csv</button>
 </a>
 ```

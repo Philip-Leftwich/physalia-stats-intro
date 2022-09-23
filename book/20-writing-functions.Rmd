@@ -499,7 +499,20 @@ In the previous section we walked through some very basic writing of new functio
 
 * [R4DS: Functions](https://r4ds.had.co.nz/functions.html) 
 
+
+
+
 # Iteration
+
+```{r, child='_setup.Rmd'}
+
+```
+
+```{r, include = FALSE}
+library(tidyverse)
+library(patchwork)
+library(here)
+```
 
 We’ve seen how to write a function and how they can be used to create concise re-usable operations that can be applied multiple times in a script without having to copy and paste, but where functions really come into their own is when combined with iteration. Iteration is the process of running the same operation on a group of objects, further minimising code replication. 
 

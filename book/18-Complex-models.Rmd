@@ -28,7 +28,7 @@ fruitfly <- readRDS(here::here("book", "files", "fruitfly.RDS"))
 
 ```{r, eval = TRUE, echo = FALSE}
 downloadthis::download_link(
-  link = "https://raw.githubusercontent.com/UEABIO/data-sci-v1/main/book/files/fruitfly.csv",
+  link = "https://raw.githubusercontent.com/Philip-Leftwich/physalia-stats-intro/main/book/files/fruitfly.csv",
   button_label = "Download Fruitfly data as csv",
   button_type = "success",
   has_icon = TRUE,
