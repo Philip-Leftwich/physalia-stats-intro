@@ -1,7 +1,7 @@
 --- 
 title: "Intro to R"
 author: "Philip T. Leftwich"
-date: "2022-09-23"
+date: "2023-01-03"
 subtitle: Introduction to statistics in R for biologists and ecologists
 site: bookdown::bookdown_site
 documentclass: book

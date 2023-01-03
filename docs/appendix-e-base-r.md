@@ -15,9 +15,7 @@ These all use the `iris` dataset, a dataset that comes with baseR (just type `ir
 
 ## Extract variables
 
-<button id="displayTextunnamed-chunk-3" onclick="javascript:toggle('unnamed-chunk-3');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-3" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-3 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-3', 'unnamed-chunk-3');">Base R</button><button class="tablinksunnamed-chunk-3" onclick="javascript:openCode(event, 'option2unnamed-chunk-3', 'unnamed-chunk-3');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-3" class="tabcontentunnamed-chunk-3">
+<div class="tab"><button class="tablinksunnamed-chunk-3 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-3', 'unnamed-chunk-3');">Base R</button><button class="tablinksunnamed-chunk-3" onclick="javascript:openCode(event, 'option2unnamed-chunk-3', 'unnamed-chunk-3');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-3" class="tabcontentunnamed-chunk-3">
 
 ```r
 iris$Sepal.Length # single variable
@@ -31,14 +29,12 @@ select(iris, Species)
 select(iris, Species, Petal.Width) # by name
 select(iris, 5, 4)  # by column index
 ```
-</div><script> javascript:hide('option2unnamed-chunk-3') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-3') </script>
 
 
 ## Make new variables
 
-<button id="displayTextunnamed-chunk-4" onclick="javascript:toggle('unnamed-chunk-4');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-4" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-4 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-4', 'unnamed-chunk-4');">Base R</button><button class="tablinksunnamed-chunk-4" onclick="javascript:openCode(event, 'option2unnamed-chunk-4', 'unnamed-chunk-4');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-4" class="tabcontentunnamed-chunk-4">
+<div class="tab"><button class="tablinksunnamed-chunk-4 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-4', 'unnamed-chunk-4');">Base R</button><button class="tablinksunnamed-chunk-4" onclick="javascript:openCode(event, 'option2unnamed-chunk-4', 'unnamed-chunk-4');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-4" class="tabcontentunnamed-chunk-4">
 
 ```r
 iris$Petal.Ratio <- iris$Petal.Length/iris$Petal.Width
@@ -52,14 +48,12 @@ mutate(iris,
        Petal.Ratio = Petal.Length/Petal.Width,
        Sepal.Ratio = Sepal.Length/Sepal.Width)
 ```
-</div><script> javascript:hide('option2unnamed-chunk-4') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-4') </script>
 
 
 Extract observations (rows)
 
-<button id="displayTextunnamed-chunk-5" onclick="javascript:toggle('unnamed-chunk-5');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-5" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-5 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-5', 'unnamed-chunk-5');">Base R</button><button class="tablinksunnamed-chunk-5" onclick="javascript:openCode(event, 'option2unnamed-chunk-5', 'unnamed-chunk-5');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-5" class="tabcontentunnamed-chunk-5">
+<div class="tab"><button class="tablinksunnamed-chunk-5 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-5', 'unnamed-chunk-5');">Base R</button><button class="tablinksunnamed-chunk-5" onclick="javascript:openCode(event, 'option2unnamed-chunk-5', 'unnamed-chunk-5');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-5" class="tabcontentunnamed-chunk-5">
 
 ```r
 # Using [,]
@@ -80,8 +74,6 @@ subset(iris, Petal.Width > 0.5 & Species == "setosa")
    <th style="text-align:right;"> Petal.Length </th>
    <th style="text-align:right;"> Petal.Width </th>
    <th style="text-align:left;"> Species </th>
-   <th style="text-align:right;"> Petal.Ratio </th>
-   <th style="text-align:right;"> Sepal.Ratio </th>
   </tr>
  </thead>
 <tbody>
@@ -92,8 +84,6 @@ subset(iris, Petal.Width > 0.5 & Species == "setosa")
    <td style="text-align:right;"> 1.6 </td>
    <td style="text-align:right;"> 0.6 </td>
    <td style="text-align:left;"> setosa </td>
-   <td style="text-align:right;"> 2.666667 </td>
-   <td style="text-align:right;"> 1.428571 </td>
   </tr>
 </tbody>
 </table>
@@ -109,8 +99,6 @@ subset(iris, Petal.Width > 0.5 & Species == "setosa")
    <th style="text-align:right;"> Petal.Length </th>
    <th style="text-align:right;"> Petal.Width </th>
    <th style="text-align:left;"> Species </th>
-   <th style="text-align:right;"> Petal.Ratio </th>
-   <th style="text-align:right;"> Sepal.Ratio </th>
   </tr>
  </thead>
 <tbody>
@@ -121,8 +109,6 @@ subset(iris, Petal.Width > 0.5 & Species == "setosa")
    <td style="text-align:right;"> 1.6 </td>
    <td style="text-align:right;"> 0.6 </td>
    <td style="text-align:left;"> setosa </td>
-   <td style="text-align:right;"> 2.666667 </td>
-   <td style="text-align:right;"> 1.428571 </td>
   </tr>
 </tbody>
 </table>
@@ -144,8 +130,6 @@ filter(iris, Petal.Width > 0.5 & Species == "setosa")
    <th style="text-align:right;"> Petal.Length </th>
    <th style="text-align:right;"> Petal.Width </th>
    <th style="text-align:left;"> Species </th>
-   <th style="text-align:right;"> Petal.Ratio </th>
-   <th style="text-align:right;"> Sepal.Ratio </th>
   </tr>
  </thead>
 <tbody>
@@ -155,20 +139,16 @@ filter(iris, Petal.Width > 0.5 & Species == "setosa")
    <td style="text-align:right;"> 1.6 </td>
    <td style="text-align:right;"> 0.6 </td>
    <td style="text-align:left;"> setosa </td>
-   <td style="text-align:right;"> 2.666667 </td>
-   <td style="text-align:right;"> 1.428571 </td>
   </tr>
 </tbody>
 </table>
 
 </div>
-</div><script> javascript:hide('option2unnamed-chunk-5') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-5') </script>
 
 ## Arrange observations (rows)
 
-<button id="displayTextunnamed-chunk-6" onclick="javascript:toggle('unnamed-chunk-6');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-6" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-6 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-6', 'unnamed-chunk-6');">Base R</button><button class="tablinksunnamed-chunk-6" onclick="javascript:openCode(event, 'option2unnamed-chunk-6', 'unnamed-chunk-6');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-6" class="tabcontentunnamed-chunk-6">
+<div class="tab"><button class="tablinksunnamed-chunk-6 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-6', 'unnamed-chunk-6');">Base R</button><button class="tablinksunnamed-chunk-6" onclick="javascript:openCode(event, 'option2unnamed-chunk-6', 'unnamed-chunk-6');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-6" class="tabcontentunnamed-chunk-6">
 
 ```r
 # descending order of species (alphabetic) followed by ascending order of Petal.Width
@@ -180,14 +160,12 @@ iris[order(rev(iris$Species), iris$Petal.Width) , ]
 # descending order of species (alphabetic) followed by ascending order of Petal.Width
 arrange(iris, desc(Species), Petal.Width) 
 ```
-</div><script> javascript:hide('option2unnamed-chunk-6') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-6') </script>
 
 
 ## Summarise observations (rows)
 
-<button id="displayTextunnamed-chunk-7" onclick="javascript:toggle('unnamed-chunk-7');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-7" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-7 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-7', 'unnamed-chunk-7');">Base R</button><button class="tablinksunnamed-chunk-7" onclick="javascript:openCode(event, 'option2unnamed-chunk-7', 'unnamed-chunk-7');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-7" class="tabcontentunnamed-chunk-7">
+<div class="tab"><button class="tablinksunnamed-chunk-7 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-7', 'unnamed-chunk-7');">Base R</button><button class="tablinksunnamed-chunk-7" onclick="javascript:openCode(event, 'option2unnamed-chunk-7', 'unnamed-chunk-7');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-7" class="tabcontentunnamed-chunk-7">
 
 ```r
 # Manually create a data.frame
@@ -251,14 +229,12 @@ summarise(iris,
 </table>
 
 </div>
-</div><script> javascript:hide('option2unnamed-chunk-7') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-7') </script>
 
 
 ## Grouped operations
 
-<button id="displayTextunnamed-chunk-8" onclick="javascript:toggle('unnamed-chunk-8');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-8" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-8 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-8', 'unnamed-chunk-8');">Base R</button><button class="tablinksunnamed-chunk-8" onclick="javascript:openCode(event, 'option2unnamed-chunk-8', 'unnamed-chunk-8');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-8" class="tabcontentunnamed-chunk-8">
+<div class="tab"><button class="tablinksunnamed-chunk-8 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-8', 'unnamed-chunk-8');">Base R</button><button class="tablinksunnamed-chunk-8" onclick="javascript:openCode(event, 'option2unnamed-chunk-8', 'unnamed-chunk-8');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-8" class="tabcontentunnamed-chunk-8">
 
 ```r
 # First operate in the data.frame by group (split-apply)
@@ -453,13 +429,11 @@ mtcars %>%
 </table>
 
 </div>
-</div><script> javascript:hide('option2unnamed-chunk-8') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-8') </script>
 
 ## Create new columns as calculations
 
-<button id="displayTextunnamed-chunk-9" onclick="javascript:toggle('unnamed-chunk-9');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-9" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-9 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-9', 'unnamed-chunk-9');">Base R</button><button class="tablinksunnamed-chunk-9" onclick="javascript:openCode(event, 'option2unnamed-chunk-9', 'unnamed-chunk-9');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-9" class="tabcontentunnamed-chunk-9">
+<div class="tab"><button class="tablinksunnamed-chunk-9 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-9', 'unnamed-chunk-9');">Base R</button><button class="tablinksunnamed-chunk-9" onclick="javascript:openCode(event, 'option2unnamed-chunk-9', 'unnamed-chunk-9');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-9" class="tabcontentunnamed-chunk-9">
 
 ```r
 # First operate in the data.frame by group (split-apply)
@@ -481,14 +455,12 @@ iris %>%
   mutate(Petal.Width.centered = Petal.Width - mean(Petal.Width)) %>% 
   ungroup() # remove any groupings from downstream analysis
 ```
-</div><script> javascript:hide('option2unnamed-chunk-9') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-9') </script>
 
 
 ## Filter rows with conditions evaluated by group
 
-<button id="displayTextunnamed-chunk-10" onclick="javascript:toggle('unnamed-chunk-10');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-10" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-10 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-10', 'unnamed-chunk-10');">Base R</button><button class="tablinksunnamed-chunk-10" onclick="javascript:openCode(event, 'option2unnamed-chunk-10', 'unnamed-chunk-10');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-10" class="tabcontentunnamed-chunk-10">
+<div class="tab"><button class="tablinksunnamed-chunk-10 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-10', 'unnamed-chunk-10');">Base R</button><button class="tablinksunnamed-chunk-10" onclick="javascript:openCode(event, 'option2unnamed-chunk-10', 'unnamed-chunk-10');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-10" class="tabcontentunnamed-chunk-10">
 
 ```r
 # First operate in the data.frame by group (split-apply)
@@ -513,8 +485,6 @@ do.call(rbind, widest_petals)
    <th style="text-align:right;"> Petal.Length </th>
    <th style="text-align:right;"> Petal.Width </th>
    <th style="text-align:left;"> Species </th>
-   <th style="text-align:right;"> Petal.Ratio </th>
-   <th style="text-align:right;"> Sepal.Ratio </th>
   </tr>
  </thead>
 <tbody>
@@ -525,8 +495,6 @@ do.call(rbind, widest_petals)
    <td style="text-align:right;"> 1.6 </td>
    <td style="text-align:right;"> 0.6 </td>
    <td style="text-align:left;"> setosa </td>
-   <td style="text-align:right;"> 2.666667 </td>
-   <td style="text-align:right;"> 1.428571 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> versicolor </td>
@@ -535,8 +503,6 @@ do.call(rbind, widest_petals)
    <td style="text-align:right;"> 4.8 </td>
    <td style="text-align:right;"> 1.8 </td>
    <td style="text-align:left;"> versicolor </td>
-   <td style="text-align:right;"> 2.666667 </td>
-   <td style="text-align:right;"> 1.843750 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> virginica.101 </td>
@@ -545,8 +511,6 @@ do.call(rbind, widest_petals)
    <td style="text-align:right;"> 6.0 </td>
    <td style="text-align:right;"> 2.5 </td>
    <td style="text-align:left;"> virginica </td>
-   <td style="text-align:right;"> 2.400000 </td>
-   <td style="text-align:right;"> 1.909091 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> virginica.110 </td>
@@ -555,8 +519,6 @@ do.call(rbind, widest_petals)
    <td style="text-align:right;"> 6.1 </td>
    <td style="text-align:right;"> 2.5 </td>
    <td style="text-align:left;"> virginica </td>
-   <td style="text-align:right;"> 2.440000 </td>
-   <td style="text-align:right;"> 2.000000 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> virginica.145 </td>
@@ -565,8 +527,6 @@ do.call(rbind, widest_petals)
    <td style="text-align:right;"> 5.7 </td>
    <td style="text-align:right;"> 2.5 </td>
    <td style="text-align:left;"> virginica </td>
-   <td style="text-align:right;"> 2.280000 </td>
-   <td style="text-align:right;"> 2.030303 </td>
   </tr>
 </tbody>
 </table>
@@ -590,8 +550,6 @@ iris %>%
    <th style="text-align:right;"> Petal.Length </th>
    <th style="text-align:right;"> Petal.Width </th>
    <th style="text-align:left;"> Species </th>
-   <th style="text-align:right;"> Petal.Ratio </th>
-   <th style="text-align:right;"> Sepal.Ratio </th>
   </tr>
  </thead>
 <tbody>
@@ -601,8 +559,6 @@ iris %>%
    <td style="text-align:right;"> 1.6 </td>
    <td style="text-align:right;"> 0.6 </td>
    <td style="text-align:left;"> setosa </td>
-   <td style="text-align:right;"> 2.666667 </td>
-   <td style="text-align:right;"> 1.428571 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 5.9 </td>
@@ -610,8 +566,6 @@ iris %>%
    <td style="text-align:right;"> 4.8 </td>
    <td style="text-align:right;"> 1.8 </td>
    <td style="text-align:left;"> versicolor </td>
-   <td style="text-align:right;"> 2.666667 </td>
-   <td style="text-align:right;"> 1.843750 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 6.3 </td>
@@ -619,8 +573,6 @@ iris %>%
    <td style="text-align:right;"> 6.0 </td>
    <td style="text-align:right;"> 2.5 </td>
    <td style="text-align:left;"> virginica </td>
-   <td style="text-align:right;"> 2.400000 </td>
-   <td style="text-align:right;"> 1.909091 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 7.2 </td>
@@ -628,8 +580,6 @@ iris %>%
    <td style="text-align:right;"> 6.1 </td>
    <td style="text-align:right;"> 2.5 </td>
    <td style="text-align:left;"> virginica </td>
-   <td style="text-align:right;"> 2.440000 </td>
-   <td style="text-align:right;"> 2.000000 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 6.7 </td>
@@ -637,21 +587,17 @@ iris %>%
    <td style="text-align:right;"> 5.7 </td>
    <td style="text-align:right;"> 2.5 </td>
    <td style="text-align:left;"> virginica </td>
-   <td style="text-align:right;"> 2.280000 </td>
-   <td style="text-align:right;"> 2.030303 </td>
   </tr>
 </tbody>
 </table>
 
 </div>
-</div><script> javascript:hide('option2unnamed-chunk-10') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-10') </script>
 
 
 ## Pivot data
 
-<button id="displayTextunnamed-chunk-11" onclick="javascript:toggle('unnamed-chunk-11');">Show Solution</button>
-
-<div id="toggleTextunnamed-chunk-11" style="display: none"><div class="panel panel-default"><div class="panel-heading panel-heading1"> Solution </div><div class="panel-body"><div class="tab"><button class="tablinksunnamed-chunk-11 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-11', 'unnamed-chunk-11');">Base R</button><button class="tablinksunnamed-chunk-11" onclick="javascript:openCode(event, 'option2unnamed-chunk-11', 'unnamed-chunk-11');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-11" class="tabcontentunnamed-chunk-11">
+<div class="tab"><button class="tablinksunnamed-chunk-11 active" onclick="javascript:openCode(event, 'option1unnamed-chunk-11', 'unnamed-chunk-11');">Base R</button><button class="tablinksunnamed-chunk-11" onclick="javascript:openCode(event, 'option2unnamed-chunk-11', 'unnamed-chunk-11');"><tt>tidyverse</tt></button></div><div id="option1unnamed-chunk-11" class="tabcontentunnamed-chunk-11">
 
 ```r
 reshape(iris, 
@@ -667,5 +613,5 @@ reshape(iris,
 iris %>% 
  pivot_longer(cols = Sepal.Length:Petal.Width, values_to = "measurement", names_to = "trait" )
 ```
-</div><script> javascript:hide('option2unnamed-chunk-11') </script></div></div></div>
+</div><script> javascript:hide('option2unnamed-chunk-11') </script>
 

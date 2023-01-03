@@ -14,7 +14,7 @@ These all use the `iris` dataset, a dataset that comes with baseR (just type `ir
 
 ## Extract variables
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r, eval = F}
 iris$Sepal.Length # single variable
@@ -35,7 +35,7 @@ select(iris, 5, 4)  # by column index
 
 ## Make new variables
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r, eval = F}
 iris$Petal.Ratio <- iris$Petal.Length/iris$Petal.Width
@@ -56,7 +56,7 @@ mutate(iris,
 
 Extract observations (rows)
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r}
 # Using [,]
@@ -76,7 +76,7 @@ filter(iris, Petal.Width > 0.5 & Species == "setosa")
 
 ## Arrange observations (rows)
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r, eval = F}
 # descending order of species (alphabetic) followed by ascending order of Petal.Width
@@ -95,7 +95,7 @@ arrange(iris, desc(Species), Petal.Width)
 
 ## Summarise observations (rows)
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r}
 # Manually create a data.frame
@@ -120,7 +120,7 @@ summarise(iris,
 
 ## Grouped operations
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r}
 # First operate in the data.frame by group (split-apply)
@@ -155,7 +155,7 @@ mtcars %>%
 
 ## Create new columns as calculations
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r, eval = F}
 # First operate in the data.frame by group (split-apply)
@@ -184,7 +184,7 @@ iris %>%
 
 ## Filter rows with conditions evaluated by group
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r}
 # First operate in the data.frame by group (split-apply)
@@ -211,7 +211,7 @@ iris %>%
 
 ## Pivot data
 
-```{solution, multCode = T}
+```{multCode}
 
 ``{r, eval = F}
 reshape(iris, 
